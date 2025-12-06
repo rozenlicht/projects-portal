@@ -13,11 +13,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, HasSlug;
 
     /**
      * The attributes that are mass assignable.
@@ -26,6 +28,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
      */
     protected $fillable = [
         'name',
+        'slug',
         'email',
         'password',
         'group_id',
@@ -77,6 +80,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);
+    }
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug');
     }
 
     public function canAccessPanel(Panel $panel): bool

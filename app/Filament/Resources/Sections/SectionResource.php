@@ -11,6 +11,7 @@ use App\Models\Section;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use UnitEnum;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
@@ -19,6 +20,8 @@ class SectionResource extends Resource
     protected static ?string $model = Section::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;
+
+    protected static string|UnitEnum|null $navigationGroup = 'User Management';
 
     public static function canAccess(): bool
     {

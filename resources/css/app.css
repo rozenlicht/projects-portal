@@ -33,3 +33,57 @@
         font-weight: 700;
     }
 }
+
+/* Mobile-friendly improvements */
+@layer base {
+    /* Ensure minimum touch target size (44x44px recommended) */
+    a, button, select {
+        @media (max-width: 640px) {
+            min-height: 44px;
+            min-width: 44px;
+        }
+    }
+    
+    /* Improve text readability on mobile */
+    body {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Better mobile scrolling */
+    html {
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Pagination mobile improvements */
+@layer components {
+    @media (max-width: 640px) {
+        .pagination {
+            @apply flex flex-wrap gap-2 justify-center;
+        }
+        
+        .pagination a,
+        .pagination span {
+            @apply min-h-[44px] min-w-[44px] flex items-center justify-center px-3 py-2 text-sm;
+        }
+    }
+    
+    /* Filter section transitions for mobile */
+    @media (max-width: 640px) {
+        .filter-section-mobile {
+            display: none;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+            transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        
+        .filter-section-mobile.filter-visible {
+            display: flex;
+            flex-direction: column;
+            max-height: 2000px;
+            opacity: 1;
+        }
+    }
+}

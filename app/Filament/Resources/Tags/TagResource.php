@@ -11,6 +11,7 @@ use App\Models\Tag;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use UnitEnum;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
@@ -19,6 +20,8 @@ class TagResource extends Resource
     protected static ?string $model = Tag::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedTag;
+
+    protected static string|UnitEnum|null $navigationGroup = 'Settings';
 
     public static function canAccess(): bool
     {

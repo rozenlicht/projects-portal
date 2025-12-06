@@ -22,6 +22,7 @@ class GroupForm
                     ->label('Section')
                     ->relationship('section', 'name')
                     ->required()
+                    ->preload()
                     ->searchable(),
             ]);
     }

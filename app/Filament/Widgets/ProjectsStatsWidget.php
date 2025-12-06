@@ -18,12 +18,23 @@ class ProjectsStatsWidget extends StatsOverviewWidget
         $bachelorTheses = Project::where('type', ProjectType::BachelorThesis->value)->count();
         $masterTheses = Project::where('type', ProjectType::MasterThesis->value)->count();
 
+        $totalProjectsPerMonthPast6Months = Project::query()
+            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as total')
+            ->groupBy('month')
+            ->orderBy('month')
+            ->limit(6)
+            ->get()
+            ->pluck('total')
+            ->toArray();
+
         return [
             Stat::make('Total Projects', $totalProjects)
                 ->description('All projects in the system')
                 ->descriptionIcon('heroicon-o-document-text')
                 ->color('primary')
-                ->chart([7, 12, 8, 15, 10, 18, $totalProjects]),
+                ->chart(
+                    [...$totalProjectsPerMonthPast6Months, $totalProjects]
+                ),
 
             Stat::make('Available Projects', $availableProjects)
                 ->description('Projects available for students')

@@ -13,9 +13,10 @@ class ProjectController extends Controller
     public function index(Request $request)
     {
         $type = $request->get('type');
-        $natureTagId = $request->get('nature');
-        $sectionTagId = $request->get('section');
-        $focusTagId = $request->get('focus');
+        $natureTagSlug = $request->get('nature');
+        $sectionTagSlug = $request->get('section');
+        $focusTagSlug = $request->get('focus');
+        $supervisorSlug = $request->get('supervisor');
         $withCompany = $request->get('with_company');
         
         $query = Project::with(['supervisors', 'tags', 'owner', 'organization'])
@@ -25,24 +26,30 @@ class ProjectController extends Controller
             $query->where('type', $type);
         }
 
-        if ($natureTagId) {
-            $query->whereHas('tags', function ($q) use ($natureTagId) {
-                $q->where('tags.id', $natureTagId)
+        if ($natureTagSlug) {
+            $query->whereHas('tags', function ($q) use ($natureTagSlug) {
+                $q->where('tags.slug', $natureTagSlug)
                   ->where('tags.category', TagCategory::Nature->value);
             });
         }
 
-        if ($sectionTagId) {
-            $query->whereHas('tags', function ($q) use ($sectionTagId) {
-                $q->where('tags.id', $sectionTagId)
+        if ($sectionTagSlug) {
+            $query->whereHas('tags', function ($q) use ($sectionTagSlug) {
+                $q->where('tags.slug', $sectionTagSlug)
                   ->where('tags.category', TagCategory::Group->value);
             });
         }
 
-        if ($focusTagId) {
-            $query->whereHas('tags', function ($q) use ($focusTagId) {
-                $q->where('tags.id', $focusTagId)
+        if ($focusTagSlug) {
+            $query->whereHas('tags', function ($q) use ($focusTagSlug) {
+                $q->where('tags.slug', $focusTagSlug)
                   ->where('tags.category', TagCategory::Focus->value);
+            });
+        }
+
+        if ($supervisorSlug) {
+            $query->whereHas('supervisors', function ($q) use ($supervisorSlug) {
+                $q->where('users.slug', $supervisorSlug);
             });
         }
 
@@ -69,15 +76,24 @@ class ProjectController extends Controller
             ->orderBy('name')
             ->get();
 
+        // Get supervisors for filter
+        $supervisors = \App\Models\User::whereHas('supervisedProjects', function ($q) {
+            $q->available();
+        })
+        ->orderBy('name')
+        ->get();
+
         return view('projects.index', [
             'projects' => $projects,
             'selectedType' => $type,
             'natureTags' => $natureTags,
             'sectionTags' => $sectionTags,
             'focusTags' => $focusTags,
-            'selectedNature' => $natureTagId,
-            'selectedSection' => $sectionTagId,
-            'selectedFocus' => $focusTagId,
+            'supervisors' => $supervisors,
+            'selectedNature' => $natureTagSlug,
+            'selectedSection' => $sectionTagSlug,
+            'selectedFocus' => $focusTagSlug,
+            'selectedSupervisor' => $supervisorSlug,
             'selectedWithCompany' => $withCompany,
         ]);
     }

@@ -17,9 +17,9 @@
         @yield('content')
     </main>
 
-    <footer class="bg-gray-50 border-t border-gray-200 mt-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="text-center text-sm text-gray-600">
+    <footer class="bg-gray-50 border-t border-gray-200 mt-8 sm:mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+            <div class="text-center text-xs sm:text-sm text-gray-600">
                 <p>&copy; {{ date('Y') }} Eindhoven University of Technology. All rights reserved.</p>
             </div>
         </div>

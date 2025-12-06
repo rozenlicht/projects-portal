@@ -43,6 +43,7 @@ class UserForm
 
                 Select::make('group_id')
                     ->label('Group')
+                    ->preload()
                     ->relationship('group', 'name')
                     ->searchable(),
 

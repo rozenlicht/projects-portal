@@ -41,9 +41,7 @@ class ProjectForm
 
                 CheckboxList::make('types')
                     ->relationship('types', 'name')
-                    ->multiple()
-                    ->required()
-                    ->preload(),
+                    ->required(),
 
                 Select::make('project_owner_id')
                     ->label('Project Owner')

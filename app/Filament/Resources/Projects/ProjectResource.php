@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Projects;
 use App\Filament\Resources\Projects\Pages\CreateProject;
 use App\Filament\Resources\Projects\Pages\EditProject;
 use App\Filament\Resources\Projects\Pages\ListProjects;
+use App\Filament\Resources\Projects\RelationManagers\ExternalSupervisorsRelationManager;
 use App\Filament\Resources\Projects\RelationManagers\SupervisorsRelationManager;
 use App\Filament\Resources\Projects\Schemas\ProjectForm;
 use App\Filament\Resources\Projects\Tables\ProjectsTable;
@@ -40,7 +41,6 @@ class ProjectResource extends Resource
     public static function getRelations(): array
     {
         return [
-            SupervisorsRelationManager::class,
         ];
     }
 

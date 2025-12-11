@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Projects\Schemas;
 
+use App\Models\ExternalSupervisor;
 use App\Models\Organization;
 use App\Models\Project;
 use App\Models\ProjectType;
@@ -9,6 +10,8 @@ use App\Models\Tag;
 use App\Models\User;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -120,7 +123,43 @@ class ProjectForm
                             ->email()
                             ->visible(fn($record) => $record?->id)
                             ->maxLength(255),
-                    ])
+                    ]),
+
+                Section::make('Supervisors')
+                    ->description('Assign supervisors to the project.')
+                    ->columns(2)
+                    ->columnSpanFull()
+                    ->schema([
+                        Repeater::make('supervisorLinks')
+                            ->label('Supervisors')
+                            ->hiddenLabel()
+                            ->relationship('supervisorLinks')
+                            ->orderColumn('order_rank')
+                            ->columns(1)
+                            ->columnSpanFull()
+                            ->reorderable()
+                            ->minItems(1)
+                            ->schema([
+                                MorphToSelect::make('supervisor')
+                                    ->label('Supervisor')
+                                    ->columns(2)
+                                    ->columnSpanFull()
+                                    ->types([
+                                        MorphToSelect\Type::make(User::class)
+                                            ->label('TU/e Supervisor')
+                                            ->titleAttribute('name'),  // or whatever column you use
+                                        MorphToSelect\Type::make(ExternalSupervisor::class)
+                                            ->titleAttribute('name'),
+                                    ])
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
+                                // TextInput::make('order_rank')
+                                //     ->label('Order Rank')
+                                //     ->numeric()
+                                    
+                            ]),
+                    ]),
             ]);
     }
 }

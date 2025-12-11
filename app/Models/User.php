@@ -33,6 +33,8 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'password',
         'group_id',
         'avatar_url',
+        'invitation_token',
+        'invitation_sent_at',
     ];
 
     /**
@@ -56,6 +58,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     {
         return [
             'email_verified_at' => 'datetime',
+            'invitation_sent_at' => 'datetime',
             'password' => 'hashed',
         ];
     }
@@ -67,7 +70,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
 
     public function supervisedProjects(): BelongsToMany
     {
-        return $this->belongsToMany(Project::class, 'project_supervisor')
+        return $this->morphedByMany(Project::class, 'supervisor', 'project_supervisor', 'supervisor_id', 'project_id')
             ->withPivot('order_rank')
             ->orderByPivot('order_rank');
     }

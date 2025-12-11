@@ -45,38 +45,19 @@
         {!! $project->richtext_content !!}
     </article>
 
-    @if($project->organization && $project->supervisors->count() === 0)
-        <div class="border-t border-gray-200 pt-6 sm:pt-8 mt-8 sm:mt-12">
-            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-4 sm:mb-6">Organization</h2>
-            <div class="flex items-center gap-2 sm:gap-3">
-                @if($project->organization->logo)
-                    <img src="{{ \Illuminate\Support\Facades\Storage::url($project->organization->logo) }}"
-                         alt="{{ $project->organization->name }}"
-                         class="w-12 h-12 sm:w-16 sm:h-16 object-contain flex-shrink-0">
-                @endif
-                <div>
-                    @if($project->organization->url)
-                        <a href="{{ $project->organization->url }}" target="_blank" rel="noopener noreferrer" class="text-lg sm:text-xl font-semibold text-[#7fabc9] hover:text-[#5a8ba8] break-words">
-                            {{ $project->organization->name }}
-                        </a>
-                    @else
-                        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 break-words">{{ $project->organization->name }}</h3>
-                    @endif
-                </div>
-            </div>
-        </div>
-    @endif
-
-    @if($project->supervisors->count() > 0)
+    @if($project->supervisorLinks->count() > 0)
         @php
-            $primarySupervisor = $project->supervisors->first();
+            $primarySupervisor = $project->supervisorLinks->first()->supervisor;
         @endphp
         <div class="border-t border-gray-200 pt-6 sm:pt-8 mt-8 sm:mt-12">
             <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-4 sm:mb-6">Supervisors</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
                 {{-- Left: Supervisor List --}}
                 <div class="space-y-3 sm:space-y-4">
-                    @foreach($project->supervisors as $index => $supervisor)
+                    @foreach($project->supervisorLinks as $index => $supervisorLink)
+                        @php
+                            $supervisor = $supervisorLink->supervisor;
+                        @endphp
                         <div class="flex items-center space-x-3 sm:space-x-4">
                             @if($supervisor->avatar_url)
                                 <img src="{{ \Illuminate\Support\Facades\Storage::url($supervisor->avatar_url) }}" 

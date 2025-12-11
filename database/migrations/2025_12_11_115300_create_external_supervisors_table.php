@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('project_supervisor', function (Blueprint $table) {
+        Schema::create('external_supervisors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained()->onDelete('cascade');
-            $table->unsignedBigInteger('user_id');
-            $table->integer('order_rank');
+            $table->string('name');
+            $table->string('slug')->unique();
+            $table->string('email');
+            $table->string('avatar_url')->nullable();
             $table->timestamps();
-            $table->unique(['project_id', 'user_id']);
         });
     }
 
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('project_supervisor');
+        Schema::dropIfExists('external_supervisors');
     }
 };

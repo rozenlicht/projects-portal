@@ -6,7 +6,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
         <div class="mb-6 sm:mb-8">
             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-heading text-gray-900 mb-2 sm:mb-4">Research Projects</h1>
-            <p class="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6">Explore available research opportunities</p>
+            <p class="text-base sm:text-lg text-gray-600 mb-4 sm:mb-6">Explore available research opportunities @if ($selectedSupervisorName) supervised by {{ $selectedSupervisorName }} @endif</p>
 
             {{-- Mobile filter toggle button --}}
             <button 
@@ -76,6 +76,19 @@
                     </select>
                 </div>
 
+                <div class="flex flex-col w-full sm:w-auto">
+                    <label for="group-filter" class="text-xs font-medium text-gray-600 mb-1">Group</label>
+                    <select id="group-filter" onchange="updateFilters('group', this.value)"
+                        class="border border-gray-300 rounded-md px-3 sm:px-4 py-2 text-sm focus:ring-[#7fabc9] focus:border-[#7fabc9] w-full">
+                        <option value="">All</option>
+                        @foreach ($groups as $group)
+                            <option value="{{ $group->id }}"
+                                {{ request('group') == $group->id ? 'selected' : '' }}>{{ $group->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
                 {{-- <div class="flex flex-col w-full sm:w-auto">
                     <label for="supervisor-filter" class="text-xs font-medium text-gray-600 mb-1">Supervisor</label>
                     <select id="supervisor-filter" onchange="updateFilters('supervisor', this.value)"
@@ -125,9 +138,10 @@
                     // Get current filter values
                     const type = document.getElementById('type-filter').value;
                     const nature = document.getElementById('nature-filter').value;
-                    const section = document.getElementById('section-filter').value;
+                    const section = document.getElementById('section-filter')?.value || '';
                     const focus = document.getElementById('focus-filter').value;
-                    const supervisor = document.getElementById('supervisor-filter').value;
+                    const group = document.getElementById('group-filter').value;
+                    const supervisor = document.getElementById('supervisor-filter')?.value || '';
                     const withCompany = document.getElementById('with-company-filter').value;
 
                     // Build new params with all current filter values
@@ -136,6 +150,7 @@
                     if (nature) params.set('nature', nature);
                     if (section) params.set('section', section);
                     if (focus) params.set('focus', focus);
+                    if (group) params.set('group', group);
                     if (supervisor) params.set('supervisor', supervisor);
                     if (withCompany) params.set('with_company', withCompany);
 
@@ -192,12 +207,15 @@
                                 </div>
                             @endif
 
-                            @if ($project->supervisors->count() > 0)
+                            @if ($project->supervisorLinks->count() > 0)
                                 <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:space-x-2 pt-3 sm:pt-4 border-t border-gray-200">
                                     <span class="text-xs sm:text-sm text-gray-500">Supervisors:</span>
                                     <div class="flex items-center gap-2 sm:gap-0">
                                         <div class="flex -space-x-2">
-                                            @foreach ($project->supervisors->take(3) as $index => $supervisor)
+                                            @foreach ($project->supervisorLinks->take(3) as $index => $supervisorLink)
+                                                @php
+                                                    $supervisor = $supervisorLink->supervisor;
+                                                @endphp
                                                 <div class="relative {{ $index === 0 ? 'z-30' : ($index === 1 ? 'z-20' : 'z-10') }} w-7 h-7 sm:w-8 sm:h-8 rounded-full border-2 border-white overflow-hidden"
                                                     title="{{ $supervisor->name }}">
                                                     @if ($supervisor->avatar_url)
@@ -211,22 +229,24 @@
                                                     @endif
                                                 </div>
                                             @endforeach
-                                            @if ($project->supervisors->count() > 3)
+                                            @if ($project->supervisorLinks->count() > 3)
                                                 <div
                                                     class="relative z-0 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 text-xs font-medium border-2 border-white">
-                                                    +{{ $project->supervisors->count() - 3 }}
+                                                    +{{ $project->supervisorLinks->count() - 3 }}
                                                 </div>
                                             @endif
                                         </div>
                                         <span class="text-xs sm:text-sm text-gray-600 sm:ml-2 truncate">
-                                            @foreach ($project->supervisors->take(2) as $supervisor)
-                                                {{ $supervisor->name }}@if (!$loop->last)
-                                                    ,
+                                            @foreach ($project->supervisorLinks->take(2) as $supervisorLink)
+                                                @php
+                                                    $supervisor = $supervisorLink->supervisor;
+                                                @endphp
+                                                {{ $supervisor->name }}@if (!$loop->last),
                                                 @endif
                                             @endforeach
                                             @if ($project->supervisors->count() > 2)
-                                                <span class="text-gray-500">+{{ $project->supervisors->count() - 2 }}
-                                                    more</span>
+                                                <span class="text-gray-500">+{{ $project->supervisorLinks->count() - 2 }}
+                                                more</span>
                                             @endif
                                         </span>
                                     </div>

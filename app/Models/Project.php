@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Support\Collection;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
@@ -29,12 +31,16 @@ class Project extends Model
     // Section and Group accessors based on first supervisor (if available)
     public function getSectionAttribute(): ?Section
     {
-        return $this->supervisors->first()?->group?->section;
+        $firstSupervisorLink = $this->supervisorLinks->first();
+        $firstSupervisor = $firstSupervisorLink ? $firstSupervisorLink->supervisor : null;
+        return $firstSupervisor && method_exists($firstSupervisor, 'group') ? $firstSupervisor->group?->section : null;
     }
 
     public function getGroupAttribute(): ?Group
     {
-        return $this->supervisors->first()?->group;
+        $firstSupervisorLink = $this->supervisorLinks->first();
+        $firstSupervisor = $firstSupervisorLink ? $firstSupervisorLink->supervisor : null;
+        return $firstSupervisor && method_exists($firstSupervisor, 'group') ? $firstSupervisor->group : null;
     }
 
     public function getSlugOptions(): SlugOptions
@@ -49,9 +55,14 @@ class Project extends Model
         return $this->belongsTo(User::class, 'project_owner_id');
     }
 
-    public function supervisors(): BelongsToMany
+    public function supervisorLinks(): HasMany
     {
-        return $this->belongsToMany(User::class, 'project_supervisor')
+        return $this->hasMany(ProjectSupervisor::class);
+    }
+
+    public function supervisors(): MorphToMany
+    {
+        return $this->morphToMany(User::class, 'supervisor', 'project_supervisor', 'project_id', 'supervisor_id')
             ->withPivot('order_rank')
             ->orderByPivot('order_rank');
     }

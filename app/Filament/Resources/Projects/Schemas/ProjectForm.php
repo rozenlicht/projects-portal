@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\ProjectType;
 use App\Models\Tag;
 use App\Models\User;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -38,13 +39,11 @@ class ProjectForm
                     ->disabled()
                     ->dehydrated(),
 
-                Select::make('types')
-                    ->label('Types')
+                CheckboxList::make('types')
                     ->relationship('types', 'name')
                     ->multiple()
                     ->required()
-                    ->preload()
-                    ->searchable(),
+                    ->preload(),
 
                 Select::make('project_owner_id')
                     ->label('Project Owner')
@@ -107,7 +106,7 @@ class ProjectForm
                     ->searchable(),
 
                 Section::make('Student Information')
-                        ->description('If the project is taken, fill in the student information.')
+                    ->description('If the project is taken, fill in the student information.')
                     ->visible(fn($record) => $record?->id)
                     ->columns(2)
                     ->columnSpanFull()

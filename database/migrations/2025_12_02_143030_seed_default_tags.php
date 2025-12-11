@@ -1,8 +1,7 @@
 <?php
 
-use App\Models\Tag;
-use App\Models\TagCategory;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -18,10 +17,20 @@ return new class extends Migration
         ];
 
         foreach ($natureTags as $tagName) {
-            Tag::firstOrCreate([
-                'name' => $tagName,
-                'category' => TagCategory::Nature,
-            ]);
+            // Use DB directly to avoid model slug generation during migration
+            $exists = DB::table('tags')
+                ->where('name', $tagName)
+                ->where('category', 'nature')
+                ->exists();
+            
+            if (!$exists) {
+                DB::table('tags')->insert([
+                    'name' => $tagName,
+                    'category' => 'nature',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
 
         // Focus category tags
@@ -36,10 +45,20 @@ return new class extends Migration
         ];
 
         foreach ($focusTags as $tagName) {
-            Tag::firstOrCreate([
-                'name' => $tagName,
-                'category' => TagCategory::Focus,
-            ]);
+            // Use DB directly to avoid model slug generation during migration
+            $exists = DB::table('tags')
+                ->where('name', $tagName)
+                ->where('category', 'focus')
+                ->exists();
+            
+            if (!$exists) {
+                DB::table('tags')->insert([
+                    'name' => $tagName,
+                    'category' => 'focus',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
     }
 
@@ -49,12 +68,14 @@ return new class extends Migration
     public function down(): void
     {
         // Delete Nature category tags
-        Tag::where('category', TagCategory::Nature)
+        DB::table('tags')
+            ->where('category', 'nature')
             ->whereIn('name', ['Experimental', 'Numerical'])
             ->delete();
 
         // Delete Focus category tags
-        Tag::where('category', TagCategory::Focus)
+        DB::table('tags')
+            ->where('category', 'focus')
             ->whereIn('name', [
                 'Metals',
                 'Steel',

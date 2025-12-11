@@ -16,15 +16,11 @@
         <h1 class="text-2xl sm:text-3xl lg:text-4xl font-heading text-gray-900 mb-3 sm:mb-4">{{ $project->name }}</h1>
         
         <div class="flex flex-wrap items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
-            <span class="inline-flex items-center px-2.5 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-[#7fabc9] text-white">
-                @if($project->type === 'internship')
-                    Internship
-                @elseif($project->type === 'bachelor_thesis')
-                    Bachelor Thesis Project
-                @else
-                    Master Thesis Project
-                @endif
-            </span>
+            @foreach($project->types as $type)
+                <span class="inline-flex items-center px-2.5 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium bg-[#7fabc9] text-white">
+                    {{ $type->name }}
+                </span>
+            @endforeach
             @if($project->tags->count() > 0)
                 <div class="flex flex-wrap gap-1.5 sm:gap-2">
                     @foreach($project->tags as $tag)

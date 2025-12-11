@@ -22,7 +22,7 @@ class RecentProjectsTableWidget extends TableWidget
         return $table
             ->query(
                 Project::query()
-                    ->with(['owner.group.section', 'supervisors', 'tags'])
+                    ->with(['owner.group.section', 'supervisors', 'tags', 'types'])
                     ->latest()
                     ->limit(50)
             )
@@ -39,20 +39,11 @@ class RecentProjectsTableWidget extends TableWidget
                     ->weight('medium')
                     ->limit(50),
 
-                TextColumn::make('type')
+                TextColumn::make('types.name')
+                    ->label('Types')
                     ->badge()
-                    ->formatStateUsing(fn ($state) => match ($state) {
-                        ProjectType::Internship => 'Internship',
-                        ProjectType::BachelorThesis => 'Bachelor Thesis',
-                        ProjectType::MasterThesis => 'Master Thesis',
-                        default => $state?->value ?? 'Unknown',
-                    })
-                    ->color(fn ($state) => match ($state) {
-                        ProjectType::Internship => 'info',
-                        ProjectType::BachelorThesis => 'success',
-                        ProjectType::MasterThesis => 'warning',
-                        default => 'gray',
-                    }),
+                    ->formatStateUsing(fn ($record) => $record->types->pluck('name')->join(', '))
+                    ->color('info'),
 
                 TextColumn::make('owner.name')
                     ->label('Owner')

@@ -165,7 +165,7 @@
                                 <h2
                                     class="text-base sm:text-lg font-heading text-gray-900 group-hover:text-[#7fabc9] transition-colors flex-1">
                                     {{ $project->name }}</h2>
-                                @if ($project->organization && $project->organization->logo)
+                                @if ($project->organization && $project->organization->logo && $project->organization->name !== 'TU/e')
                                     <img src="{{ \Illuminate\Support\Facades\Storage::url($project->organization->logo) }}"
                                         alt="{{ $project->organization->name }}"
                                         class="w-10 h-10 sm:w-12 sm:h-12 object-contain flex-shrink-0">

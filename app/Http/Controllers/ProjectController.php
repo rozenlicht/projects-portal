@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
-use App\Models\ProjectType;
 use App\Models\Tag;
 use App\Models\TagCategory;
 use Illuminate\Http\Request;
@@ -19,11 +18,13 @@ class ProjectController extends Controller
         $supervisorSlug = $request->get('supervisor');
         $withCompany = $request->get('with_company');
         
-        $query = Project::with(['supervisors', 'tags', 'owner', 'organization'])
+        $query = Project::with(['supervisors', 'tags', 'owner', 'organization', 'types'])
             ->available();
 
-        if ($type && in_array($type, ['internship', 'bachelor_thesis', 'master_thesis'])) {
-            $query->where('type', $type);
+        if ($type) {
+            $query->whereHas('types', function ($q) use ($type) {
+                $q->where('project_types.slug', $type);
+            });
         }
 
         if ($natureTagSlug) {
@@ -116,7 +117,8 @@ class ProjectController extends Controller
             'supervisors.group.section',
             'tags',
             'owner.group.section',
-            'organization'
+            'organization',
+            'types'
         ]);
 
         return view('projects.show', [

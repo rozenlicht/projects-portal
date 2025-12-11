@@ -38,14 +38,13 @@ class ProjectForm
                     ->disabled()
                     ->dehydrated(),
 
-                Select::make('type')
-                    ->options([
-                        ProjectType::Internship->value => 'Internship',
-                        ProjectType::BachelorThesis->value => 'Bachelor Thesis Project',
-                        ProjectType::MasterThesis->value => 'Master Thesis Project',
-                    ])
+                Select::make('types')
+                    ->label('Types')
+                    ->relationship('types', 'name')
+                    ->multiple()
                     ->required()
-                    ->native(false),
+                    ->preload()
+                    ->searchable(),
 
                 Select::make('project_owner_id')
                     ->label('Project Owner')
@@ -57,6 +56,9 @@ class ProjectForm
                 Select::make('organization_id')
                     ->label('Organization')
                     ->relationship('organization', 'name')
+                    ->helperText('The organization the project is associated with. Default is TU/e.')
+                    ->default(fn() => Organization::where('name', 'TU/e')->first()?->id)
+                    ->required()
                     ->searchable()
                     ->preload(),
 

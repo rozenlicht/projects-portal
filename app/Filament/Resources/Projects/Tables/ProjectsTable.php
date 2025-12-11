@@ -29,20 +29,11 @@ class ProjectsTable
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('type')
+                TextColumn::make('types.name')
+                    ->label('Types')
                     ->badge()
-                    ->formatStateUsing(fn ($state) => match ($state) {
-                        ProjectType::Internship->value => 'Internship',
-                        ProjectType::BachelorThesis->value => 'Bachelor Thesis',
-                        ProjectType::MasterThesis->value => 'Master Thesis',
-                        default => $state,
-                    })
-                    ->color(fn ($state) => match ($state) {
-                        ProjectType::Internship->value => 'info',
-                        ProjectType::BachelorThesis->value => 'success',
-                        ProjectType::MasterThesis->value => 'warning',
-                        default => 'gray',
-                    }),
+                    ->formatStateUsing(fn($record) => $record->types->pluck('name')->join(', '))
+                    ->color('info'),
 
                 TextColumn::make('owner.name')
                     ->label('Owner')
@@ -66,12 +57,11 @@ class ProjectsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                SelectFilter::make('type')
-                    ->options([
-                        ProjectType::Internship->value => 'Internship',
-                        ProjectType::BachelorThesis->value => 'Bachelor Thesis',
-                        ProjectType::MasterThesis->value => 'Master Thesis',
-                    ]),
+                SelectFilter::make('types')
+                    ->label('Type')
+                    ->relationship('types', 'name')
+                    ->multiple()
+                    ->preload(),
 
                 SelectFilter::make('status')
                     ->options([

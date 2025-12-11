@@ -1,59 +1,229 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CEM Projects Portal
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A small but modern web application for managing and showcasing research projects at the Computational and Experimental Mechanics (CEM) Division of Eindhoven University of Technology. The portal enables students to discover available internships, bachelor thesis projects, and master thesis projects, while providing administrators and supervisors with powerful tools to manage projects and track their status.
 
-## About Laravel
+## 🎯 Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Public Features
+- **Project Browsing**: Browse available research projects with filtering by:
+  - Project type (Internship, Bachelor Thesis, Master Thesis)
+  - Research nature (Experimental, Numerical, etc.)
+  - Research section/group
+  - Focus areas (Metals, Steel, 3D printing, Meta materials, etc.)
+  - Supervisor
+  - Company involvement
+- **Project Details**: View detailed information about each project, including descriptions, supervisors, and contact information
+- **Past Projects**: Archive of completed projects
+- **Contact**: Information about the CEM Division and project inquiries
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Admin Features (Filament Panel)
+- **Project Management**: Create, edit, and manage projects with rich content editing
+- **User Management**: Manage administrators and supervisors with role-based permissions
+- **Tag Management**: Organize projects with categorized tags (Group, Nature, Focus)
+- **Organization Management**: Track external organizations/companies associated with projects
+- **Section & Group Management**: Organize the division structure
+- **Project Status Tracking**: Track which projects are available or taken (assigned to students)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🛠️ Tech Stack
 
-## Learning Laravel
+- **Framework**: [Laravel](https://laravel.com) 12
+- **Admin Panel**: [Filament](https://filamentphp.com) 4
+- **Frontend**: [Tailwind CSS](https://tailwindcss.com) 4
+- **Build Tool**: [Vite](https://vitejs.dev)
+- **PHP Version**: 8.4+
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 📋 Requirements
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP 8.4 or higher
+- Composer
+- Node.js and npm
+- MySQL/PostgreSQL/SQLite database
+- Web server (Apache/Nginx) or PHP built-in server
 
-## Laravel Sponsors
+## 🚀 Installation
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Quick Setup
 
-### Premium Partners
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd projects-portal
+   ```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+2. **Install dependencies**
+   ```bash
+   composer install
+   npm install
+   ```
 
-## Contributing
+3. **Configure environment**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+4. **Configure database**
+   
+   Edit `.env` file with your database credentials:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=projects_portal
+   DB_USERNAME=your_username
+   DB_PASSWORD=your_password
+   ```
 
-## Code of Conduct
+5. **Run migrations and seeders**
+   ```bash
+   php artisan migrate
+   php artisan db:seed
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+6. **Build assets**
+   ```bash
+   npm run build
+   ```
 
-## Security Vulnerabilities
+7. **Create storage link**
+   ```bash
+   php artisan storage:link
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## 🏃 Development
 
-## License
+### Start Development Server
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+The project includes a convenient development script that runs all necessary services:
+
+```bash
+composer run dev
+```
+
+This starts:
+- Laravel development server
+- Queue worker
+- Log viewer (Pail)
+- Vite dev server (hot reload)
+
+### Manual Setup
+
+If you prefer to run services individually:
+
+```bash
+# Terminal 1: Laravel server
+php artisan serve
+
+# Terminal 2: Queue worker (if using queues)
+php artisan queue:work
+
+# Terminal 3: Asset compilation
+npm run dev
+```
+
+### Database Development
+
+```bash
+# Run migrations
+php artisan migrate
+
+# Run seeders (if available)
+php artisan db:seed
+
+# Refresh database
+php artisan migrate:fresh --seed
+```
+
+## 🧪 Testing
+
+Run the test suite using Pest:
+
+```bash
+composer run test
+```
+
+Or directly:
+
+```bash
+php artisan test
+```
+
+## 📁 Project Structure
+
+```
+projects-portal/
+├── app/
+│   ├── Filament/          # Filament admin panel resources
+│   │   ├── Resources/     # CRUD resources (Projects, Users, Tags, etc.)
+│   │   └── Widgets/       # Dashboard widgets
+│   ├── Http/
+│   │   └── Controllers/   # Web controllers
+│   ├── Livewire/          # Livewire components
+│   ├── Models/            # Eloquent models
+│   └── Policies/          # Authorization policies
+├── database/
+│   ├── migrations/        # Database migrations
+│   └── seeders/           # Database seeders
+├── public/                # Public assets and entry point
+├── resources/
+│   ├── views/             # Blade templates
+│   ├── css/               # Stylesheets
+│   └── js/                # JavaScript files
+└── routes/
+    └── web.php            # Web routes
+```
+
+## 🔐 Roles & Permissions
+
+The application uses [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission) for role-based access control.
+
+### Available Roles
+
+- **Administrator**: Full access to all features and resources
+- **Supervisor**: Can manage their own projects and projects they supervise
+
+### Project Ownership
+
+- Projects can have a **project owner** (who created the project)
+- Projects can have multiple **supervisors** (with order ranking)
+- Supervisors can manage projects where they are either the owner or a supervisor
+
+## 📝 Project Types
+
+Projects can be one of the following types:
+
+- **Internship**: Industrial or research internships
+- **Bachelor Thesis**: Bachelor's degree thesis projects
+- **Master Thesis**: Master's degree thesis projects
+
+## 🏷️ Tag System
+
+Projects can be tagged with multiple tags from three categories:
+
+- **Group**: Research groups/sections (e.g., associated with specific professors)
+- **Nature**: Research methodology (Experimental, Numerical, etc.)
+- **Focus**: Research focus areas (Metals, Steel, 3D printing, Meta materials, etc.)
+
+
+## 🎨 Styling
+
+- **Primary Color**: `#7fabc9`
+- **Framework**: Tailwind CSS v4
+- **Theme**: Light mode only
+- **Typography**: Inter font family
+
+## 📄 License
+
+This project is open-sourced software licensed under the [MIT license](LICENSE).
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## 📧 Contact
+
+For questions about the CEM Projects Portal or project inquiries, please visit the [contact page](/contact) or reach out to the Computational and Experimental Mechanics Division at Eindhoven University of Technology. Repo owner can be contacted for technical matters: @Rozenlicht. (Bart Verhaegh)
+
+---
+
+**Built with ❤️ for the CEM Division at Eindhoven University of Technology**

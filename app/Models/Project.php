@@ -17,7 +17,6 @@ class Project extends Model
     protected $fillable = [
         'name',
         'slug',
-        'type',
         'student_name',
         'student_email',
         'featured_image',
@@ -26,13 +25,6 @@ class Project extends Model
         'project_owner_id',
         'organization_id',
     ];
-
-    protected function casts(): array
-    {
-        return [
-            'type' => ProjectType::class,
-        ];
-    }
 
     // Section and Group accessors based on first supervisor (if available)
     public function getSectionAttribute(): ?Section
@@ -74,6 +66,11 @@ class Project extends Model
         return $this->belongsTo(Organization::class);
     }
 
+    public function types(): BelongsToMany
+    {
+        return $this->belongsToMany(ProjectType::class);
+    }
+
     public function getIsTakenAttribute(): bool
     {
         return !empty($this->student_name) || !empty($this->student_email);
@@ -92,11 +89,4 @@ class Project extends Model
                 ->orWhereNotNull('student_email');
         });
     }
-}
-
-enum ProjectType: string
-{
-    case Internship = 'internship';
-    case BachelorThesis = 'bachelor_thesis';
-    case MasterThesis = 'master_thesis';
 }

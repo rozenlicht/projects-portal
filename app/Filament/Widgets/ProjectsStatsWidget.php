@@ -14,9 +14,14 @@ class ProjectsStatsWidget extends StatsOverviewWidget
         $totalProjects = Project::count();
         $availableProjects = Project::available()->count();
         $pastProjects = Project::past()->count();
-        $internships = Project::where('type', ProjectType::Internship->value)->count();
-        $bachelorTheses = Project::where('type', ProjectType::BachelorThesis->value)->count();
-        $masterTheses = Project::where('type', ProjectType::MasterThesis->value)->count();
+        
+        $internshipType = ProjectType::where('slug', 'internship')->first();
+        $bachelorType = ProjectType::where('slug', 'bachelor_thesis')->first();
+        $masterType = ProjectType::where('slug', 'master_thesis')->first();
+        
+        $internships = $internshipType ? Project::whereHas('types', fn($q) => $q->where('project_types.id', $internshipType->id))->count() : 0;
+        $bachelorTheses = $bachelorType ? Project::whereHas('types', fn($q) => $q->where('project_types.id', $bachelorType->id))->count() : 0;
+        $masterTheses = $masterType ? Project::whereHas('types', fn($q) => $q->where('project_types.id', $masterType->id))->count() : 0;
 
         $totalProjectsPerMonthPast6Months = Project::query()
             ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as total')

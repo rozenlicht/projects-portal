@@ -18,6 +18,11 @@ class GroupForm
                     ->maxLength(255)
                     ->unique(ignoreRecord: true),
 
+                TextInput::make('abbrev_id')
+                    ->label('Abbreviation ID')
+                    ->maxLength(255)
+                    ->unique(ignoreRecord: true),
+
                 Select::make('section_id')
                     ->label('Section')
                     ->relationship('section', 'name')

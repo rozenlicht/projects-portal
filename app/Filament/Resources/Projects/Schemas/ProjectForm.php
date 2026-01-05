@@ -2,15 +2,15 @@
 
 namespace App\Filament\Resources\Projects\Schemas;
 
-use App\Models\ExternalSupervisor;
 use App\Models\Organization;
 use App\Models\Project;
 use App\Models\ProjectType;
 use App\Models\Tag;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\MorphToSelect;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -49,7 +49,7 @@ class ProjectForm
                 Select::make('project_owner_id')
                     ->label('Project Owner')
                     ->relationship('owner', 'name')
-                    ->default(fn() => auth()->user()?->id)
+                    ->default(fn() => Auth::id())
                     ->required()
                     ->searchable(),
 
@@ -135,30 +135,104 @@ class ProjectForm
                             ->hiddenLabel()
                             ->relationship('supervisorLinks')
                             ->orderColumn('order_rank')
-                            ->columns(1)
+                            ->columns(2)
                             ->columnSpanFull()
                             ->reorderable()
                             ->minItems(1)
+                            ->default(fn($record) => $record?->id ? [] : [
+                                [
+                                    'supervisor_type' => User::class,
+                                    'supervisor_id' => Auth::id(),
+                                ],
+                            ])
                             ->schema([
-                                MorphToSelect::make('supervisor')
-                                    ->label('Supervisor')
-                                    ->columns(2)
-                                    ->columnSpanFull()
-                                    ->types([
-                                        MorphToSelect\Type::make(User::class)
-                                            ->label('TU/e Supervisor')
-                                            ->titleAttribute('name'),  // or whatever column you use
-                                        MorphToSelect\Type::make(ExternalSupervisor::class)
-                                            ->titleAttribute('name'),
+                                Radio::make('supervisor_type_selector')
+                                    ->label('Supervisor Type')
+                                    ->options([
+                                        'internal' => 'TU/e Supervisor',
+                                        'external' => 'External Supervisor',
                                     ])
+                                    ->default('internal')
+                                    ->live()
+                                    ->required()
+                                    ->dehydrated(false)
+                                    ->afterStateHydrated(function ($component, $state, $record) {
+                                        if ($record && $record->exists) {
+                                            $component->state($record->isExternal() ? 'external' : 'internal');
+                                        } elseif (!$state) {
+                                            $component->state('internal');
+                                        }
+                                    })
+                                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                                        if ($state === 'internal') {
+                                            $set('external_supervisor_name', null);
+                                            // If supervisor_id is not set and we're on internal, set default
+                                            if (!$get('supervisor_id')) {
+                                                $set('supervisor_id', Auth::id());
+                                            }
+                                        } else {
+                                            $set('supervisor_id', null);
+                                        }
+                                    }),
+                                
+                                Select::make('supervisor_id')
+                                    ->label('TU/e Supervisor')
+                                    ->options(fn() => User::query()->orderBy('name')->pluck('name', 'id'))
+                                    ->visible(fn($get) => $get('supervisor_type_selector') === 'internal')
                                     ->searchable()
                                     ->preload()
-                                    ->required(),
-                                // TextInput::make('order_rank')
-                                //     ->label('Order Rank')
-                                //     ->numeric()
-                                    
-                            ]),
+                                    ->required(fn($get) => $get('supervisor_type_selector') === 'internal')
+                                    ->default(fn($record) => $record?->supervisor_id ?? Auth::id())
+                                    ->afterStateHydrated(function ($component, $state, $record) {
+                                        // If no state and no record, set to authenticated user
+                                        if (!$state && !$record) {
+                                            $component->state(Auth::id());
+                                        }
+                                    }),
+                                
+                                TextInput::make('external_supervisor_name')
+                                    ->label('External Supervisor Name')
+                                    ->visible(fn($get) => $get('supervisor_type_selector') === 'external')
+                                    ->required(fn($get) => $get('supervisor_type_selector') === 'external')
+                                    ->maxLength(255)
+                                    ->default(fn($record) => $record?->external_supervisor_name),
+                            ])
+                            ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
+                                // Check if supervisor_id is present (internal) or external_supervisor_name (external)
+                                $isInternal = isset($data['supervisor_id']) && !empty($data['supervisor_id']);
+                                
+                                // If supervisor_type_selector indicates internal but supervisor_id is missing, set it
+                                if (isset($data['supervisor_type_selector']) && $data['supervisor_type_selector'] === 'internal' && !$isInternal) {
+                                    $data['supervisor_id'] = Auth::id();
+                                    $isInternal = true;
+                                }
+                                
+                                if ($isInternal) {
+                                    $data['supervisor_type'] = User::class;
+                                    $data['external_supervisor_name'] = null;
+                                } else {
+                                    $data['supervisor_type'] = null;
+                                    $data['supervisor_id'] = null;
+                                }
+                                
+                                unset($data['supervisor_type_selector']);
+                                return $data;
+                            })
+                            ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
+                                // Check if supervisor_id is present (internal) or external_supervisor_name (external)
+                                $isInternal = isset($data['supervisor_id']) && !empty($data['supervisor_id']);
+                                
+                                if ($isInternal) {
+                                    $data['supervisor_type'] = User::class;
+                                    $data['external_supervisor_name'] = null;
+                                } else {
+                                    $data['supervisor_type'] = null;
+                                    $data['supervisor_id'] = null;
+                                }
+                                
+                                unset($data['supervisor_type_selector']);
+                                return $data;
+                            }),
                     ]),
             ]);
     }

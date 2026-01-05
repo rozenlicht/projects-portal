@@ -14,6 +14,7 @@ class Group extends Model
     protected $fillable = [
         'name',
         'section_id',
+        'abbrev_id',
     ];
 
     public function section(): BelongsTo

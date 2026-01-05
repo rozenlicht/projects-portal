@@ -24,14 +24,7 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mt-8 sm:mt-12 lg:mt-16">
-        <div class="text-center p-4 sm:p-6 bg-gray-50 rounded-lg">
-            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-2">Internships</h2>
-            <p class="text-sm sm:text-base text-gray-600">Explore internship opportunities in our research department</p>
-            <a href="{{ route('projects.index', ['type' => 'internship']) }}" class="text-[#7fabc9] hover:text-[#5a8ba8] font-medium mt-3 sm:mt-4 inline-block text-sm sm:text-base">
-                View Internships →
-            </a>
-        </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mt-8 sm:mt-12 lg:mt-16">
         <div class="text-center p-4 sm:p-6 bg-gray-50 rounded-lg">
             <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-2">Bachelor Thesis Projects</h2>
             <p class="text-sm sm:text-base text-gray-600">Find bachelor thesis projects that match your interests</p>

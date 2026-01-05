@@ -1,12 +1,12 @@
 # CEM Projects Portal
 
-A small but modern web application for managing and showcasing research projects at the Computational and Experimental Mechanics (CEM) Division of Eindhoven University of Technology. The portal enables students to discover available internships, bachelor thesis projects, and master thesis projects, while providing administrators and supervisors with powerful tools to manage projects and track their status.
+A small but modern web application for managing and showcasing research projects at the Computational and Experimental Mechanics (CEM) Division of Eindhoven University of Technology. The portal enables students to discover available bachelor thesis projects and master thesis projects, while providing administrators and supervisors with powerful tools to manage projects and track their status.
 
 ## 🎯 Features
 
 ### Public Features
 - **Project Browsing**: Browse available research projects with filtering by:
-  - Project type (Internship, Bachelor Thesis, Master Thesis)
+  - Project type (Bachelor Thesis, Master Thesis)
   - Research nature (Experimental, Numerical, etc.)
   - Research section/group
   - Focus areas (Metals, Steel, 3D printing, Meta materials, etc.)
@@ -192,7 +192,6 @@ The application uses [Spatie Laravel Permission](https://spatie.be/docs/laravel-
 
 Projects can be one of the following types:
 
-- **Internship**: Industrial or research internships
 - **Bachelor Thesis**: Bachelor's degree thesis projects
 - **Master Thesis**: Master's degree thesis projects
 

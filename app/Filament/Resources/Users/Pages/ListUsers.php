@@ -3,11 +3,13 @@
 namespace App\Filament\Resources\Users\Pages;
 
 use App\Filament\Resources\Users\UserResource;
+use App\Models\Group;
 use App\Models\User;
 use App\Notifications\UserInvited;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
@@ -37,6 +39,10 @@ class ListUsers extends ListRecords
                         ->required()
                         ->maxLength(255)
                         ->unique('users', 'email'),
+                    Select::make('group_id')
+                        ->label('Group')
+                        ->options(Group::all()->pluck('name', 'id'))
+                        ->required(),
                     CheckboxList::make('roles')
                         ->label('Roles')
                         ->options([
@@ -45,10 +51,11 @@ class ListUsers extends ListRecords
                         ])
                         ->default(['Supervisor'])
                         ->required(),
+
                 ])
                 ->action(function (array $data) {
                     $invitationToken = Str::random(64);
-                    
+
                     $user = User::create([
                         'name' => $data['name'],
                         'email' => $data['email'],

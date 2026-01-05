@@ -14,7 +14,6 @@ class ProjectTypeSeeder extends Seeder
     public function run(): void
     {
         $types = [
-            ['name' => 'Internship', 'slug' => 'internship'],
             ['name' => 'Bachelor Thesis Project', 'slug' => 'bachelor_thesis'],
             ['name' => 'Master Thesis Project', 'slug' => 'master_thesis'],
         ];

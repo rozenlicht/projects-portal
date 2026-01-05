@@ -19,6 +19,7 @@ class Project extends Model
     protected $fillable = [
         'name',
         'slug',
+        'project_number',
         'student_name',
         'student_email',
         'featured_image',
@@ -27,6 +28,17 @@ class Project extends Model
         'project_owner_id',
         'organization_id',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saved(function ($project) {
+            if (empty($project->project_number)) {
+                $project->generateProjectNumber();
+            }
+        });
+    }
 
     // Section and Group accessors based on first supervisor (if available)
     public function getSectionAttribute(): ?Section
@@ -57,7 +69,7 @@ class Project extends Model
 
     public function supervisorLinks(): HasMany
     {
-        return $this->hasMany(ProjectSupervisor::class);
+        return $this->hasMany(ProjectSupervisor::class)->orderBy('order_rank');
     }
 
     public function supervisors(): MorphToMany
@@ -99,5 +111,67 @@ class Project extends Model
             $q->whereNotNull('student_name')
                 ->orWhereNotNull('student_email');
         });
+    }
+
+    /**
+     * Generate a unique project number based on year, section, and group.
+     * Format: YY + Section abbrev_id + Group abbrev_id + 5-digit number
+     * Example: 25MOMREM0035
+     */
+    public function generateProjectNumber(): ?string
+    {
+        // Reload supervisor links to ensure we have the latest data
+        $this->load('supervisorLinks.supervisor.group.section');
+
+        $firstSupervisorLink = $this->supervisorLinks->first();
+        if (!$firstSupervisorLink) {
+            return null;
+        }
+
+        $supervisor = $firstSupervisorLink->supervisor;
+        if (!$supervisor) {
+            return null;
+        }
+
+        // Only User supervisors have groups (external supervisors don't)
+        if (!method_exists($supervisor, 'group') || !$supervisor->group) {
+            return null;
+        }
+
+        $group = $supervisor->group;
+        $section = $group->section;
+
+        if (!$section || !$section->abbrev_id || !$group->abbrev_id) {
+            return null;
+        }
+
+        // Get year from project creation date (2 digits), fallback to current year if not set
+        $year = $this->created_at ? $this->created_at->format('y') : date('y');
+
+        // Build prefix: YY + Section abbrev_id + Group abbrev_id
+        $prefix = $year . $section->abbrev_id . $group->abbrev_id;
+
+        // Find the highest existing project number with this prefix
+        $lastProject = static::where('project_number', 'like', $prefix . '%')
+            ->orderBy('project_number', 'desc')
+            ->first();
+
+        // Extract the number part and increment
+        $nextNumber = 1;
+        if ($lastProject && $lastProject->project_number) {
+            // Extract the 5-digit number from the end
+            $numberPart = substr($lastProject->project_number, strlen($prefix));
+            if (is_numeric($numberPart)) {
+                $nextNumber = (int) $numberPart + 1;
+            }
+        }
+
+        // Format as 5-digit number with leading zeros
+        $projectNumber = $prefix . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+
+        // Update the project number
+        $this->updateQuietly(['project_number' => $projectNumber]);
+
+        return $projectNumber;
     }
 }

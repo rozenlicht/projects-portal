@@ -15,11 +15,9 @@ class ProjectsStatsWidget extends StatsOverviewWidget
         $availableProjects = Project::available()->count();
         $pastProjects = Project::past()->count();
         
-        $internshipType = ProjectType::where('slug', 'internship')->first();
         $bachelorType = ProjectType::where('slug', 'bachelor_thesis')->first();
         $masterType = ProjectType::where('slug', 'master_thesis')->first();
         
-        $internships = $internshipType ? Project::whereHas('types', fn($q) => $q->where('project_types.id', $internshipType->id))->count() : 0;
         $bachelorTheses = $bachelorType ? Project::whereHas('types', fn($q) => $q->where('project_types.id', $bachelorType->id))->count() : 0;
         $masterTheses = $masterType ? Project::whereHas('types', fn($q) => $q->where('project_types.id', $masterType->id))->count() : 0;
 
@@ -52,7 +50,7 @@ class ProjectsStatsWidget extends StatsOverviewWidget
                 ->color('info'),
 
             Stat::make('By Type', '')
-                ->description("Internships: {$internships} | Bachelor: {$bachelorTheses} | Master: {$masterTheses}")
+                ->description("Bachelor: {$bachelorTheses} | Master: {$masterTheses}")
                 ->descriptionIcon('heroicon-o-chart-bar')
                 ->color('warning'),
         ];

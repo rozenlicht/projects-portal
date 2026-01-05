@@ -16,7 +16,7 @@
                 Through the <strong>Mechanics of Materials (MoM)</strong> section, we explore advanced material behavior and design. The <strong>Processing and Performance (PP)</strong> section focuses on manufacturing processes and material performance optimization. Our <strong>Microsystems (MS)</strong> section pioneers research in microscale systems and technologies.
             </p>
             <p class="text-sm sm:text-base text-gray-700">
-                This projects portal serves as a central platform to showcase available research opportunities for students, including internships, bachelor thesis projects, and master thesis projects. We connect students with cutting-edge research opportunities across advanced manufacturing, energy conversion and storage, and computational engineering, providing world-class projects in both computational and experimental domains.
+                This projects portal serves as a central platform to showcase available research opportunities for students, including bachelor thesis projects and master thesis projects. We connect students with cutting-edge research opportunities across advanced manufacturing, energy conversion and storage, and computational engineering, providing world-class projects in both computational and experimental domains.
             </p>
         </div>
         

@@ -29,9 +29,6 @@
                     {{-- Dropdown menu --}}
                     <div class="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 border border-gray-200">
                         <div class="py-1">
-                            <a href="{{ route('projects.index', ['type' => 'internship']) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-[#7fabc9] hover:text-white transition-colors">
-                                Internships
-                            </a>
                             <a href="{{ route('projects.index', ['type' => 'bachelor_thesis']) }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-[#7fabc9] hover:text-white transition-colors">
                                 Bachelor Thesis Projects
                             </a>
@@ -71,9 +68,6 @@
             <div class="space-y-1">
                 <a href="{{ route('projects.index') }}" class="block px-4 py-3 text-base font-medium text-gray-700 hover:bg-[#7fabc9] hover:text-white rounded-md transition-colors">
                     All Projects
-                </a>
-                <a href="{{ route('projects.index', ['type' => 'internship']) }}" class="block px-4 py-3 text-base font-medium text-gray-700 hover:bg-[#7fabc9] hover:text-white rounded-md transition-colors">
-                    Internships
                 </a>
                 <a href="{{ route('projects.index', ['type' => 'bachelor_thesis']) }}" class="block px-4 py-3 text-base font-medium text-gray-700 hover:bg-[#7fabc9] hover:text-white rounded-md transition-colors">
                     Bachelor Thesis Projects

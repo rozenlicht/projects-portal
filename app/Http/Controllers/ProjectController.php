@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Group;
 use App\Models\Project;
 use App\Models\ProjectSupervisor;
+use App\Models\Section;
 use App\Models\Tag;
 use App\Models\TagCategory;
 use App\Models\User;
@@ -16,7 +17,7 @@ class ProjectController extends Controller
     {
         $type = $request->get('type');
         $natureTagSlug = $request->get('nature');
-        $sectionTagSlug = $request->get('section');
+        $sectionSlug = $request->get('section');
         $focusTagSlug = $request->get('focus');
         $supervisorSlug = $request->get('supervisor');
         $withCompany = $request->get('with_company');
@@ -39,10 +40,16 @@ class ProjectController extends Controller
             });
         }
 
-        if ($sectionTagSlug) {
-            $query->whereHas('tags', function ($q) use ($sectionTagSlug) {
-                $q->where('tags.slug', $sectionTagSlug)
-                    ->where('tags.category', TagCategory::Group->value);
+        if ($sectionSlug) {
+            $query->whereHas('supervisorLinks', function ($q) use ($sectionSlug) {
+                $q->where('supervisor_type', User::class)
+                    ->whereIn('supervisor_id', function ($subQ) use ($sectionSlug) {
+                        $subQ->select('users.id')
+                            ->from('users')
+                            ->join('groups', 'users.group_id', '=', 'groups.id')
+                            ->join('sections', 'groups.section_id', '=', 'sections.id')
+                            ->where('sections.slug', $sectionSlug);
+                    });
             });
         }
 
@@ -55,14 +62,23 @@ class ProjectController extends Controller
 
         if ($supervisorSlug) {
             // Supervisor is a polymorphic relationship, so we need to get the supervisor by the slug via projectSupervisor->supervisor
-            $supervisor = ProjectSupervisor::with(['supervisor'])->whereHas('supervisor', function ($q) use ($supervisorSlug) {
-                $q->where('slug', $supervisorSlug);
-            })->first();
+            // For external supervisors, we'll search by external_supervisor_name (slugified)
+            $supervisor = ProjectSupervisor::with(['supervisor'])
+                ->where(function ($q) use ($supervisorSlug) {
+                    $q->whereHas('supervisor', function ($subQ) use ($supervisorSlug) {
+                        $subQ->where('slug', $supervisorSlug);
+                    })
+                    ->orWhere(function ($subQ) use ($supervisorSlug) {
+                        $subQ->whereNull('supervisor_type')
+                            ->whereRaw('LOWER(REPLACE(external_supervisor_name, " ", "-")) = ?', [strtolower($supervisorSlug)]);
+                    });
+                })
+                ->first();
             if ($supervisor) {
                 $query->whereHas('supervisorLinks', function ($q) use ($supervisor) {
                     $q->where('project_supervisor.id', $supervisor->id);
                 });
-                $supervisorName = $supervisor->supervisor->name;
+                $supervisorName = $supervisor->name;
             }
         }
 
@@ -92,8 +108,7 @@ class ProjectController extends Controller
             ->orderBy('name')
             ->get();
 
-        $sectionTags = Tag::where('category', TagCategory::Group->value)
-            ->orderBy('name')
+        $sections = Section::orderBy('name')
             ->get();
 
         $focusTags = Tag::where('category', TagCategory::Focus->value)
@@ -108,7 +123,7 @@ class ProjectController extends Controller
         $supervisors = $supervisors->map(function ($supervisor) {
             return [
                 'id' => $supervisor->id,
-                'name' => $supervisor->supervisor->name,
+                'name' => $supervisor->name,
                 'type' => $supervisor->supervisor_type,
             ];
         });
@@ -117,12 +132,12 @@ class ProjectController extends Controller
             'projects' => $projects,
             'selectedType' => $type,
             'natureTags' => $natureTags,
-            'sectionTags' => $sectionTags,
+            'sections' => $sections,
             'focusTags' => $focusTags,
             'groups' => $groups,
             'supervisors' => $supervisors,
             'selectedNature' => $natureTagSlug,
-            'selectedSection' => $sectionTagSlug,
+            'selectedSection' => $sectionSlug,
             'selectedFocus' => $focusTagSlug,
             'selectedSupervisor' => $supervisorSlug,
             'selectedSupervisorName' => $supervisorName,

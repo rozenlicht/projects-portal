@@ -70,6 +70,7 @@ class ProjectForm
                     ->image()
                     ->directory('projects')
                     ->disk('public')
+                    ->helperText('The featured image of the project. The recommended minimumsize is 518 x 192 pixels.')
                     ->maxSize(5120)
                     ->imageEditor(),
 

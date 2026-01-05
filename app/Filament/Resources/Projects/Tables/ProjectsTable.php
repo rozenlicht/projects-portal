@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Projects\Tables;
 use App\Models\Group;
 use App\Models\ProjectType;
 use App\Models\Section;
+use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -12,6 +13,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectsTable
 {
@@ -57,6 +59,27 @@ class ProjectsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
+                SelectFilter::make('scope')
+                    ->label('View')
+                    ->options([
+                        'my_projects' => 'My Projects',
+                        'all' => 'All Projects',
+                    ])
+                    ->default('my_projects')
+                    ->query(function ($query, $state) {
+                        if ($state === 'my_projects') {
+                            $user = Auth::user();
+                            return $query->where(function ($q) use ($user) {
+                                $q->where('project_owner_id', $user->id)
+                                    ->orWhereHas('supervisorLinks', function ($subQ) use ($user) {
+                                        $subQ->where('supervisor_type', User::class)
+                                            ->where('supervisor_id', $user->id);
+                                    });
+                            });
+                        }
+                        return $query;
+                    }),
+
                 SelectFilter::make('types')
                     ->label('Type')
                     ->relationship('types', 'name')

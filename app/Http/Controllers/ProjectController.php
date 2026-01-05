@@ -103,7 +103,7 @@ class ProjectController extends Controller
             });
         }
 
-        $projects = $query->latest()->paginate(12);
+        $projects = $query->inRandomOrder()->paginate(12);
 
         // Get tags for filters
         $natureTags = Tag::where('category', TagCategory::Nature->value)

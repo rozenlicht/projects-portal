@@ -2,10 +2,32 @@
 
 namespace App\Filament\Resources\Projects\Pages;
 
+use App\Enums\PublicationStatus;
 use App\Filament\Resources\Projects\ProjectResource;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateProject extends CreateRecord
 {
     protected static string $resource = ProjectResource::class;
+
+    protected function getFormActions(): array
+    {
+        return [
+            ...parent::getFormActions(),
+            Action::make('saveAsConcept')
+                ->label('Save as concept')
+                ->color('gray')
+                ->action('saveAsConcept'),
+        ];
+    }
+
+    public function saveAsConcept(): void
+    {
+        $this->form->fill([
+            'publication_status' => PublicationStatus::Concept->value,
+        ]);
+
+        $this->create();
+    }
 }

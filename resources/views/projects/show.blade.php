@@ -143,8 +143,16 @@
                             @if (!$primarySupervisorLink->isExternal() && $primarySupervisor && $primarySupervisor->group)
                                 <div>
                                     <span class="text-xs sm:text-sm font-medium text-gray-600">Group:</span>
-                                    <p class="text-gray-900 text-xs sm:text-sm sm:text-base">
-                                        {{ $primarySupervisor->group->name }}</p>
+                                    @if ($primarySupervisor->group->external_url)
+                                        <a href="{{ $primarySupervisor->group->external_url }}" target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="text-[#7fabc9] hover:text-[#5a8ba8] text-xs sm:text-sm sm:text-base">
+                                            {{ $primarySupervisor->group->name }}
+                                        </a>
+                                    @else
+                                        <p class="text-gray-900 text-xs sm:text-sm sm:text-base">
+                                            {{ $primarySupervisor->group->name }}</p>
+                                    @endif
                                 </div>
                             @endif
                             @if (!$primarySupervisorLink->isExternal() && $primarySupervisor && $primarySupervisor->group && $primarySupervisor->group->section)

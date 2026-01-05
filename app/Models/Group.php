@@ -15,6 +15,7 @@ class Group extends Model
         'name',
         'section_id',
         'abbrev_id',
+        'external_url',
     ];
 
     public function section(): BelongsTo

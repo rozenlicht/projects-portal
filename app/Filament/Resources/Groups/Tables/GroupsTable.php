@@ -24,6 +24,13 @@ class GroupsTable
                     ->sortable()
                     ->badge(),
 
+                TextColumn::make('external_url')
+                    ->label('External URL')
+                    ->url(fn ($record) => $record->external_url)
+                    ->openUrlInNewTab()
+                    ->limit(50)
+                    ->toggleable(),
+
                 TextColumn::make('users_count')
                     ->counts('users')
                     ->label('Users')

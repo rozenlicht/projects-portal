@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PublicationStatus;
 use App\Models\Group;
 use App\Models\Project;
 use App\Models\ProjectSupervisor;
@@ -25,7 +26,8 @@ class ProjectController extends Controller
         $supervisorName = null;
 
         $query = Project::with(['supervisors', 'tags', 'owner', 'organization', 'types'])
-            ->available();
+            ->available()
+            ->where('publication_status', PublicationStatus::Published->value);
 
         if ($type) {
             $query->whereHas('types', function ($q) use ($type) {
@@ -160,6 +162,11 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
+        // Only show published projects
+        if ($project->publication_status !== PublicationStatus::Published) {
+            abort(404);
+        }
+
         $project->load([
             'supervisors.group.section',
             'tags',

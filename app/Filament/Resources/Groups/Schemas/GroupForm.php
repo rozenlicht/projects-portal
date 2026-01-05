@@ -29,6 +29,12 @@ class GroupForm
                     ->required()
                     ->preload()
                     ->searchable(),
+
+                TextInput::make('external_url')
+                    ->label('External URL')
+                    ->url()
+                    ->maxLength(255)
+                    ->helperText('Optional URL that will make the group name clickable on project detail pages.'),
             ]);
     }
 }

@@ -8,6 +8,8 @@ use App\Models\ProjectType;
 use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use App\Enums\PublicationStatus;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
@@ -105,6 +107,38 @@ class ProjectForm
                     ->multiple()
                     ->preload()
                     ->searchable(),
+
+                Checkbox::make('save_as_concept')
+                    ->label('Save as concept')
+                    ->helperText('If checked, this project will be saved as a concept and will not be visible on the public project pages.')
+                    ->default(false)
+                    ->dehydrated(false)
+                    ->afterStateHydrated(function ($component, $state, $record) {
+                        if ($record && $record->exists) {
+                            $component->state($record->publication_status === PublicationStatus::Concept);
+                        } else {
+                            $component->state(false);
+                        }
+                    })
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        $set('publication_status', $state ? PublicationStatus::Concept->value : PublicationStatus::Published->value);
+                    })
+                    ->live(),
+
+                Select::make('publication_status')
+                    ->label('Publication Status')
+                    ->options([
+                        PublicationStatus::Published->value => 'Published',
+                        PublicationStatus::Concept->value => 'Concept',
+                    ])
+                    ->default(fn($record) => $record?->publication_status?->value ?? PublicationStatus::Published->value)
+                    ->afterStateHydrated(function ($component, $state, $record) {
+                        if (!$state) {
+                            $component->state(PublicationStatus::Published->value);
+                        }
+                    })
+                    ->hidden()
+                    ->dehydrated(),
 
                 Section::make('Student Information')
                     ->description('If the project is taken, fill in the student information.')

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\PublicationStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -27,6 +28,11 @@ class Project extends Model
         'richtext_content',
         'project_owner_id',
         'organization_id',
+        'publication_status',
+    ];
+
+    protected $casts = [
+        'publication_status' => PublicationStatus::class,
     ];
 
     protected static function boot()

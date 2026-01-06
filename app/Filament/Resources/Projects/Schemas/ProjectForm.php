@@ -31,6 +31,7 @@ class ProjectForm
             ->components([
 
                 TextInput::make('name')
+                    ->label('Title of the project')
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
@@ -76,12 +77,14 @@ class ProjectForm
 
                 Textarea::make('short_description')
                     ->label('Short Description')
+                    ->helperText('One or two sentences about the project. This will be displayed on the project list page.')
                     ->required()
                     ->rows(3)
                     ->maxLength(500),
 
                 RichEditor::make('richtext_content')
                     ->label('Content')
+                    ->helperText('You can also copy paste additional images into this editor.')
                     ->required()
                     ->toolbarButtons([
                         'attachFiles',

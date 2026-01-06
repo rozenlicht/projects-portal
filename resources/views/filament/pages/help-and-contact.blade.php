@@ -47,8 +47,6 @@
                 <div class="space-y-1">
                     <p class="font-semibold text-lg mb-1">
                         J. (Joris) Remmers
-                    </p>
-                    <p>
                         <a href="mailto:j.j.c.remmers@tue.nl" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 underline">
                             j.j.c.remmers@tue.nl
                         </a>
@@ -71,8 +69,6 @@
                 <div class="space-y-1">
                     <p class="font-semibold text-lg mb-1">
                         B. (Bart) Verhaegh
-                    </p>
-                    <p>
                         <a href="mailto:b.j.verhaegh@tue.nl" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 underline">
                             b.j.verhaegh@tue.nl
                         </a>

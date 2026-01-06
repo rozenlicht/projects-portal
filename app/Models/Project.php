@@ -172,8 +172,8 @@ class Project extends Model
             }
         }
 
-        // Format as 5-digit number with leading zeros
-        $projectNumber = $prefix . str_pad($nextNumber, 5, '0', STR_PAD_LEFT);
+        // Format as 2-digit number with leading zeros
+        $projectNumber = $prefix . str_pad($nextNumber, 2, '0', STR_PAD_LEFT);
 
         // Update the project number
         $this->updateQuietly(['project_number' => $projectNumber]);

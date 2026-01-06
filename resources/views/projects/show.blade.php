@@ -79,12 +79,6 @@
                                     <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
                                         <h3 class="font-semibold text-gray-900 text-sm sm:text-base break-words">
                                             {{ $supervisorName }}</h3>
-                                        @if ($index === 0)
-                                            <span
-                                                class="inline-flex items-center px-1.5 sm:px-2 py-0.5 rounded text-xs font-medium bg-[#7fabc9] text-white whitespace-nowrap">
-                                                Primary Supervisor
-                                            </span>
-                                        @endif
                                     </div>
                                     @if (!$isExternal && $supervisor && $supervisor->email)
                                         <a href="#"

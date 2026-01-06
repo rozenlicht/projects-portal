@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\PublicationStatus;
 use App\Models\Group;
+use App\Models\Organization;
 use App\Models\Project;
 use App\Models\ProjectSupervisor;
 use App\Models\Section;
@@ -86,7 +87,7 @@ class ProjectController extends Controller
 
         if ($withCompany !== null) {
             if ($withCompany === 'yes') {
-                $query->whereNotNull('organization_id');
+                $query->whereNotNull('organization_id')->where('organization_id', '!=', Organization::where('name', 'TU/e')->first()->id);
             } elseif ($withCompany === 'no') {
                 $query->whereNull('organization_id');
             }

@@ -21,34 +21,19 @@
 
         <x-filament::section class="mb-3">
             <x-slot name="heading">
-                Project Inquiries
-            </x-slot>
-            <x-slot name="description">
-                Questions about specific research projects
-            </x-slot>
-            <div class="prose max-w-none">
-                <p>
-                    For questions about specific research projects, please visit the project pages and contact the supervisors listed for each project.
-                </p>
-            </div>
-        </x-filament::section>
-
-        <x-filament::section class="mb-3">
-            <x-slot name="heading">
                 Administrative & Staff Questions
             </x-slot>
             <x-slot name="description">
                 For administrative questions and staff matters
             </x-slot>
-            <div class="prose max-w-none">
+            <div class="prose max-w-none prose-a:underline">
                 <p class="mb-2">
                     For administrative questions, staff matters, or general inquiries about the projects portal, please contact:
                 </p>
                 <div class="space-y-1">
                     <p class="font-semibold text-lg mb-1">
-                        J. (Joris) Remmers
-                        <a href="mailto:j.j.c.remmers@tue.nl" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 underline">
-                            j.j.c.remmers@tue.nl
+                        <a href="mailto:j.j.c.remmers@tue.nl" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 underline decoration-solid underline-offset-2">
+                            <u>Joris Remmers</u>
                         </a>
                     </p>
                 </div>
@@ -62,15 +47,14 @@
             <x-slot name="description">
                 For technical issues and website functionality questions
             </x-slot>
-            <div class="prose max-w-none">
+            <div class="prose max-w-none prose-a:underline">
                 <p class="mb-2">
                     For technical issues, bugs, or questions about the website functionality, please contact:
                 </p>
                 <div class="space-y-1">
                     <p class="font-semibold text-lg mb-1">
-                        B. (Bart) Verhaegh
-                        <a href="mailto:b.j.verhaegh@tue.nl" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 underline">
-                            b.j.verhaegh@tue.nl
+                        <a href="mailto:b.j.verhaegh@tue.nl" class="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 underline decoration-solid underline-offset-2">
+                            <u>Bart Verhaegh</u>
                         </a>
                     </p>
                 </div>

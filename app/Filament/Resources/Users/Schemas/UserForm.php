@@ -34,10 +34,11 @@ class UserForm
                     ->imageEditor()
                     ->imageEditorAspectRatios([
                         null,
-                        '16:9',
-                        '4:3',
                         '1:1',
                     ])
+                    ->imageResizeMode('cover')
+                    ->imageResizeTargetHeight(100)
+                    ->imageResizeTargetWidth(100)
                     ->avatar()
                     ->columnSpanFull(),
 

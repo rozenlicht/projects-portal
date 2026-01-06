@@ -29,6 +29,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->darkMode(false)
             ->login()
+            ->passwordReset()
             ->colors([
                 'primary' => Color::hex('#7fabc9'),
             ])

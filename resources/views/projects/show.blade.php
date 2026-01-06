@@ -68,10 +68,10 @@
                                 @if (!$isExternal && $supervisor && $supervisor->avatar_url)
                                     <img src="{{ \Illuminate\Support\Facades\Storage::url($supervisor->avatar_url) }}"
                                         alt="{{ $supervisorName }}"
-                                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover flex-shrink-0">
+                                        class="w-10 h-10 sm:w-12 sm:h-12 md:w-15 md:h-15 rounded-full object-cover flex-shrink-0">
                                 @else
                                     <div
-                                        class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#7fabc9] flex items-center justify-center text-white font-semibold text-base sm:text-lg flex-shrink-0">
+                                        class="w-10 h-10 sm:w-12 sm:h-12 md:w-15 md:h-15 rounded-full bg-[#7fabc9] flex items-center justify-center text-white font-semibold text-base sm:text-lg flex-shrink-0">
                                         {{ substr($supervisorName, 0, 1) }}
                                     </div>
                                 @endif

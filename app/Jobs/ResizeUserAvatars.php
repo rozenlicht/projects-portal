@@ -79,6 +79,7 @@ class ResizeUserAvatars implements ShouldQueue
 
         // Check if resize is needed
         if ($originalWidth <= self::MAX_DIMENSION && $originalHeight <= self::MAX_DIMENSION) {
+            Log::info("Avatar for user {$user->id} is already within limits: {$originalWidth}x{$originalHeight}");
             return false; // Already within limits
         }
 

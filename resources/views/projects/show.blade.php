@@ -143,19 +143,24 @@
                             @if (!$primarySupervisorLink->isExternal() && $primarySupervisor && $primarySupervisor->group)
                                 <div>
                                     <span class="text-xs sm:text-sm font-medium text-gray-600">Group:</span>
-                                    @if ($primarySupervisor->group->external_url)
-                                        <a href="{{ $primarySupervisor->group->external_url }}" target="_blank"
-                                            rel="noopener noreferrer"
-                                            class="text-[#7fabc9] hover:text-[#5a8ba8] text-xs sm:text-sm sm:text-base">
+                                    <p class="text-gray-900 text-xs sm:text-sm sm:text-base">
+                                        @if ($primarySupervisor->group->external_url)
+                                            <a href="{{ $primarySupervisor->group->external_url }}" target="_blank"
+                                                rel="noopener noreferrer"
+                                                class="text-[#7fabc9] hover:text-[#5a8ba8] text-xs sm:text-sm sm:text-base">
+                                                {{ $primarySupervisor->group->name }}
+                                            </a>
+                                        @else
                                             {{ $primarySupervisor->group->name }}
-                                        </a>
-                                    @else
-                                        <p class="text-gray-900 text-xs sm:text-sm sm:text-base">
-                                            {{ $primarySupervisor->group->name }}</p>
-                                    @endif
+                                        @endif
+                                    </p>
                                 </div>
                             @endif
-                            @if (!$primarySupervisorLink->isExternal() && $primarySupervisor && $primarySupervisor->group && $primarySupervisor->group->section)
+                            @if (
+                                !$primarySupervisorLink->isExternal() &&
+                                    $primarySupervisor &&
+                                    $primarySupervisor->group &&
+                                    $primarySupervisor->group->section)
                                 <div>
                                     <span class="text-xs sm:text-sm font-medium text-gray-600">Section:</span>
                                     <p class="text-gray-900 text-xs sm:text-sm sm:text-base">

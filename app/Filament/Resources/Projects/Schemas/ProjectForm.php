@@ -104,6 +104,7 @@ class ProjectForm
                 Select::make('tags')
                     ->relationship('tags', 'name')
                     ->getOptionLabelFromRecordUsing(fn($record) => $record?->name . ' (' . $record?->category?->value . ')')
+                    ->helperText("Do you really miss a tag? Please let us know, we'll add it as soon as possible.")
                     ->columnSpanFull()
                     ->multiple()
                     ->preload()

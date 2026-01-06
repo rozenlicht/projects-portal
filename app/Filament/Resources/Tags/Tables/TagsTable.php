@@ -22,6 +22,7 @@ class TagsTable
 
                 TextColumn::make('category')
                     ->badge()
+                    ->sortable()
                     ->formatStateUsing(fn ($state) => match ($state) {
                         TagCategory::Group->value => 'Group',
                         TagCategory::Nature->value => 'Nature',

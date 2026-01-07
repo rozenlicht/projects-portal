@@ -33,10 +33,10 @@ class RecentProjectsTableWidget extends TableWidget
 
                 TextColumn::make('name')
                     ->label('Project Name')
+                    ->wrap()
                     ->searchable()
                     ->sortable()
-                    ->weight('medium')
-                    ->limit(50),
+                    ->weight('medium'),
 
                 TextColumn::make('types.name')
                     ->label('Types')

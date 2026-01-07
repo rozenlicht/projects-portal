@@ -30,11 +30,11 @@ A small but modern web application for managing and showcasing research projects
 - **Admin Panel**: [Filament](https://filamentphp.com) 4
 - **Frontend**: [Tailwind CSS](https://tailwindcss.com) 4
 - **Build Tool**: [Vite](https://vitejs.dev)
-- **PHP Version**: 8.4+
+- **PHP Version**: 8.2+
 
 ## 📋 Requirements
 
-- PHP 8.4 or higher
+- PHP 8.2 or higher
 - Composer
 - Node.js and npm
 - MySQL/PostgreSQL/SQLite database
@@ -180,13 +180,14 @@ The application uses [Spatie Laravel Permission](https://spatie.be/docs/laravel-
 ### Available Roles
 
 - **Administrator**: Full access to all features and resources
-- **Supervisor**: Can manage their own projects and projects they supervise
+- **Staff member - supervisor**: Can create and update projects; manage organizations
+- **Researcher**: Can create and update projects; manage organizations
 
 ### Project Ownership
 
 - Projects can have a **project owner** (who created the project)
 - Projects can have multiple **supervisors** (with order ranking)
-- Supervisors can manage projects where they are either the owner or a supervisor
+- Supervisors and Researchers can manage projects where they are the owner; Supervisors can also manage projects they supervise
 
 ## 📝 Project Types
 

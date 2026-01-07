@@ -23,6 +23,12 @@ class UserResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'User Management';
 
+    // Only for admins
+    public static function canAccess(): bool
+    {
+        return auth()->user()?->hasRole('Administrator') ?? false;
+    }
+
     public static function form(Schema $schema): Schema
     {
         return UserForm::configure($schema);

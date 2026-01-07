@@ -89,7 +89,7 @@ class ProjectController extends Controller
             if ($withCompany === 'yes') {
                 $query->whereNotNull('organization_id')->where('organization_id', '!=', Organization::where('name', 'TU/e')->first()->id);
             } elseif ($withCompany === 'no') {
-                $query->whereNull('organization_id');
+                $query->where('organization_id', Organization::where('name', 'TU/e')->first()->id);
             }
         }
 

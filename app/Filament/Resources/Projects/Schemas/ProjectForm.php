@@ -51,10 +51,21 @@ class ProjectForm
 
                 Select::make('project_owner_id')
                     ->label('Project Owner')
-                    ->relationship('owner', 'name')
-                    ->default(fn() => Auth::id())
+                    ->relationship(
+                        'owner',
+                        'name',
+                        fn ($query) => $query->whereHas('roles', fn ($q) => $q->where('name', 'Staff member - supervisor'))
+                    )
+                    ->default(fn() => Auth::user()?->group?->group_leader_id ?? Auth::id())
                     ->required()
                     ->searchable(),
+
+                Select::make('created_by_id')
+                    ->label('Created By')
+                    ->relationship('creator', 'name')
+                    ->default(fn() => Auth::id())
+                    ->disabled()
+                    ->dehydrated(),
 
                 Select::make('organization_id')
                     ->label('Organization')
@@ -71,7 +82,7 @@ class ProjectForm
                     ->image()
                     ->directory('projects')
                     ->disk('public')
-                    ->helperText('The featured image of the project. The recommended minimumsize is 518 x 192 pixels.')
+                    ->helperText('The featured image of the project. The recommended size is 517 x 192 pixels.')
                     ->maxSize(5120)
                     ->imageEditor(),
 
@@ -178,6 +189,41 @@ class ProjectForm
                             ->columnSpanFull()
                             ->reorderable()
                             ->minItems(1)
+                            ->rules([
+                                function (): \Closure {
+                                    return function (string $attribute, $value, \Closure $fail): void {
+                                        // $value is the repeater state: array of items
+                                        if (!is_array($value) || count($value) === 0) {
+                                            return; // let minItems(1) handle empties
+                                        }
+                            
+                                        $first = $value[0] ?? null;
+                                        if (!is_array($first)) {
+                                            return;
+                                        }
+                            
+                                        $type = $first['supervisor_type_selector'] ?? null;
+                            
+                                        // Only enforce role for internal first supervisor
+                                        if ($type !== 'internal') {
+                                            return;
+                                        }
+                            
+                                        $supervisorId = $first['supervisor_id'] ?? null;
+                                        if (!$supervisorId) {
+                                            dd($user);
+                                            $fail('The first supervisor must be an internal TU/e supervisor.');
+                                            return;
+                                        }
+                            
+                                        $user = \App\Models\User::find($supervisorId);
+                                        if (!$user || !$user->hasRole('Staff member - supervisor')) {
+                                            dd($user);
+                                            $fail("The first supervisor must be a TU/e staff member.");
+                                        }
+                                    };
+                                },
+                            ])
                             ->default(fn($record) => $record?->id ? [] : [
                                 [
                                     'supervisor_type' => User::class,
@@ -216,7 +262,10 @@ class ProjectForm
                                 
                                 Select::make('supervisor_id')
                                     ->label('TU/e Supervisor')
-                                    ->options(fn() => User::query()->orderBy('name')->pluck('name', 'id'))
+                                    ->options(fn() => User::query()
+                                        ->orderBy('name')
+                                        ->pluck('name', 'id')
+                                    )
                                     ->visible(fn($get) => $get('supervisor_type_selector') === 'internal')
                                     ->searchable()
                                     ->preload()

@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\PublicationStatus;
+use Filament\Notifications\Notification;
+use Illuminate\Validation\ValidationException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -10,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
@@ -38,6 +41,44 @@ class Project extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::creating(function (Project $project) {
+            // Automatically set the creator if not already set and user is authenticated
+            if (is_null($project->created_by_id) && Auth::check()) {
+                $project->created_by_id = Auth::id();
+            }
+        });
+
+        static::saving(function (Project $project) {
+            // Ensure the first supervisor is an internal staff supervisor.
+            $project->loadMissing('supervisorLinks.supervisor.roles');
+
+            $firstSupervisorLink = $project->supervisorLinks
+                ->sortBy('order_rank')
+                ->first();
+
+            $isValid = false;
+
+            if ($firstSupervisorLink && !$firstSupervisorLink->isExternal()) {
+                $supervisor = $firstSupervisorLink->supervisor;
+
+                if ($supervisor instanceof User && $supervisor->hasRole('Staff member - supervisor')) {
+                    $isValid = true;
+                }
+            }
+
+            if (! $isValid) {
+                // Also show a filament notification
+                Notification::make()
+                    ->title('Error saving this project')
+                    ->body('The first supervisor must be a TU/e staff member.')
+                    ->danger()
+                    ->send();
+                throw ValidationException::withMessages([
+                    'supervisorLinks' => 'The first supervisor must be a TU/e staff member.',
+                ]);
+            }
+        });
 
         static::saved(function ($project) {
             if (empty($project->project_number)) {
@@ -71,6 +112,11 @@ class Project extends Model
     public function owner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'project_owner_id');
+    }
+
+    public function creator(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'created_by_id');
     }
 
     public function supervisorLinks(): HasMany

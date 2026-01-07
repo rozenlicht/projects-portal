@@ -16,8 +16,6 @@ class HelpAndContact extends Page
 
     protected static ?string $navigationLabel = 'Help & Contact';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Settings';
-
     protected static ?int $navigationSort = 100;
 
     public static function getNavigationLabel(): string

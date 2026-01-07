@@ -13,7 +13,7 @@ class ProjectPolicy
      */
     public function viewAny(User $user): bool
     {
-        return $user->hasRole(['Administrator', 'Supervisor']);
+        return $user->hasAnyRole(['Administrator', 'Staff member - supervisor', 'Researcher']);
     }
 
     /**
@@ -21,7 +21,7 @@ class ProjectPolicy
      */
     public function view(User $user, Project $project): bool
     {
-        return $user->hasRole(['Administrator', 'Supervisor']);
+        return $user->hasAnyRole(['Administrator', 'Staff member - supervisor', 'Researcher']);
     }
 
     /**
@@ -29,7 +29,7 @@ class ProjectPolicy
      */
     public function create(User $user): bool
     {
-        return $user->hasRole(['Administrator', 'Supervisor']);
+        return $user->hasAnyRole(['Administrator', 'Staff member - supervisor', 'Researcher']);
     }
 
     /**
@@ -42,10 +42,38 @@ class ProjectPolicy
             return true;
         }
 
-        // Supervisors can only update their own projects or projects they supervise
-        if ($user->hasRole('Supervisor')) {
-            return $project->project_owner_id === $user->id
-                || $project->supervisors->contains($user->id);
+        // Researchers can update projects owned by their group leader or projects they supervise
+        if ($user->hasRole('Researcher')) {
+            // Check if project is owned by their group leader
+            $groupLeaderId = $user->group?->group_leader_id;
+            if ($groupLeaderId && $project->project_owner_id === $groupLeaderId) {
+                return true;
+            }
+            
+            // Check if user is a supervisor of the project
+            return $project->supervisors->contains($user->id);
+        }
+
+        // Staff member - supervisors can update their own projects or projects with supervisors in groups they lead
+        if ($user->hasRole('Staff member - supervisor')) {
+            // Check if they own the project
+            if ($project->project_owner_id === $user->id) {
+                return true;
+            }
+            
+            // Check if at least one supervisor is in a group they lead
+            $groupsLedByUser = \App\Models\Group::where('group_leader_id', $user->id)->pluck('id');
+            if ($groupsLedByUser->isNotEmpty()) {
+                // Load supervisors and check if any are in groups led by this user
+                $project->load('supervisorLinks.supervisor.group');
+                foreach ($project->supervisorLinks as $supervisorLink) {
+                    $supervisor = $supervisorLink->supervisor;
+                    // Only check User supervisors (not external supervisors)
+                    if ($supervisor instanceof User && $supervisor->group_id && $groupsLedByUser->contains($supervisor->group_id)) {
+                        return true;
+                    }
+                }
+            }
         }
 
         return false;

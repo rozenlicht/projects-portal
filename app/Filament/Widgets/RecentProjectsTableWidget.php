@@ -23,8 +23,7 @@ class RecentProjectsTableWidget extends TableWidget
             ->query(
                 Project::query()
                     ->with(['owner.group.section', 'supervisors', 'tags', 'types'])
-                    ->latest()
-                    ->limit(50)
+                    ->limit(5)
             )
             ->columns([
                 ImageColumn::make('featured_image')
@@ -45,22 +44,46 @@ class RecentProjectsTableWidget extends TableWidget
                     ->formatStateUsing(fn ($record) => $record->types->pluck('name')->join(', '))
                     ->color('info'),
 
-                TextColumn::make('owner.name')
-                    ->label('Owner')
-                    ->searchable()
-                    ->sortable(),
-
-                TextColumn::make('supervisors_count')
-                    ->counts('supervisors')
+                    ImageColumn::make('supervisors.avatar')
                     ->label('Supervisors')
-                    ->badge()
-                    ->color('primary'),
-
-                TextColumn::make('is_taken')
-                    ->label('Status')
-                    ->formatStateUsing(fn ($state) => $state ? 'Taken' : 'Available')
-                    ->badge()
-                    ->color(fn ($state) => $state ? 'success' : 'gray'),
+                    ->circular()
+                    ->stacked()
+                    ->limit(3)
+                    ->getStateUsing(function ($record) {
+                        // Get all users that are supervisors in correct order, exclude externals
+                        return $record->supervisorLinks
+                            ->filter(fn($link) => !$link->isExternal())
+                            ->map(function($link) {
+                                $supervisor = $link->supervisor;
+                                if (!$supervisor) {
+                                    return null;
+                                }
+                                
+                                // If avatar exists, return the URL
+                                if ($supervisor->avatar_url) {
+                                    return \Illuminate\Support\Facades\Storage::url($supervisor->avatar_url);
+                                }
+                                
+                                // Otherwise, generate an SVG data URL with the initial
+                                $initial = strtoupper(substr($supervisor->name, 0, 1));
+                                $svg = sprintf(
+                                    '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="20" fill="#7fabc9"/><text x="20" y="20" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="white" text-anchor="middle" dominant-baseline="central">%s</text></svg>',
+                                    htmlspecialchars($initial)
+                                );
+                                return 'data:image/svg+xml;base64,' . base64_encode($svg);
+                            })
+                            ->filter()
+                            ->values()
+                            ->toArray();
+                    })
+                    ->tooltip(function ($record) {
+                        return $record->supervisorLinks
+                            ->filter(fn($link) => !$link->isExternal())
+                            ->map(fn($link) => $link->supervisor?->name)
+                            ->filter()
+                            ->join(', ');
+                    })
+                    ->searchable(false),
 
                 TextColumn::make('created_at')
                     ->label('Created')
@@ -73,7 +96,6 @@ class RecentProjectsTableWidget extends TableWidget
             ->defaultSort('created_at', 'desc')
             ->heading('Recent Projects')
             ->description('Latest projects added to the system')
-            ->paginated([5, 10])
-            ->recordUrl(fn (Project $record): string => ProjectResource::getUrl('edit', ['record' => $record]));
+            ->recordUrl(fn (Project $record): string => route('projects.show', $record->slug), true);
     }
 }

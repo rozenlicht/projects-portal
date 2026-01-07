@@ -15,7 +15,7 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
-use Spatie\Permission\Models\Role;
+use App\Models\Role;
 
 class ListUsers extends ListRecords
 {
@@ -46,10 +46,11 @@ class ListUsers extends ListRecords
                     CheckboxList::make('roles')
                         ->label('Roles')
                         ->options([
-                            'Administrator' => 'Admin',
-                            'Supervisor' => 'Supervisor',
+                            'Administrator' => 'Administrator',
+                            'Staff member - supervisor' => 'Staff member - supervisor',
+                            'Researcher' => 'Researcher',
                         ])
-                        ->default(['Supervisor'])
+                        ->default(['Researcher'])
                         ->required(),
 
                 ])

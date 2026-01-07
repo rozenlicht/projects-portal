@@ -21,7 +21,8 @@ class RolePermissionSeeder extends Seeder
 
         // Create roles
         $administrator = Role::firstOrCreate(['name' => 'Administrator']);
-        $supervisor = Role::firstOrCreate(['name' => 'Supervisor']);
+        $staffSupervisor = Role::firstOrCreate(['name' => 'Staff member - supervisor']);
+        $researcher = Role::firstOrCreate(['name' => 'Researcher']);
 
         // Create permissions
         $permissions = [
@@ -31,6 +32,7 @@ class RolePermissionSeeder extends Seeder
             'delete projects',
             'manage tags',
             'manage users',
+            'manage organizations',
         ];
 
         foreach ($permissions as $permission) {
@@ -40,11 +42,20 @@ class RolePermissionSeeder extends Seeder
         // Assign all permissions to Administrator
         $administrator->givePermissionTo(Permission::all());
 
-        // Assign limited permissions to Supervisor
-        $supervisor->givePermissionTo([
+        // Assign permissions to Staff member - supervisor
+        $staffSupervisor->givePermissionTo([
             'view projects',
             'create projects',
             'update projects',
+            'manage organizations',
+        ]);
+
+        // Assign permissions to Researcher
+        $researcher->givePermissionTo([
+            'view projects',
+            'create projects',
+            'update projects',
+            'manage organizations',
         ]);
     }
 }

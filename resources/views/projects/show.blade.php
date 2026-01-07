@@ -12,7 +12,7 @@
 
             @if ($project->featured_image)
                 <img src="{{ \Illuminate\Support\Facades\Storage::url($project->featured_image) }}" alt="{{ $project->name }}"
-                    class="w-full h-48 sm:h-64 object-cover rounded-lg mb-4 sm:mb-6">
+                    class="w-full object-cover rounded-lg mb-4 sm:mb-6">
             @endif
 
             <h1 class="text-2xl sm:text-3xl lg:text-4xl font-heading text-gray-900 mb-3 sm:mb-4">{{ $project->name }}</h1>

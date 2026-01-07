@@ -240,9 +240,7 @@
                                             </div>
                                             <span class="text-xs sm:text-sm text-gray-600 sm:ml-2 truncate">
                                                 @foreach ($project->supervisorLinks->take(2) as $supervisorLink)
-                                                    {{ $supervisorLink->name }}@if (!$loop->last)
-                                                        ,
-                                                    @endif
+                                                    {{ $supervisorLink->name }}@if (!$loop->last), @endif
                                                 @endforeach
                                                 @if ($project->supervisorLinks->count() > 2)
                                                     <span

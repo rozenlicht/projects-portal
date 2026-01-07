@@ -30,6 +30,12 @@ class GroupForm
                     ->preload()
                     ->searchable(),
 
+                Select::make('group_leader_id')
+                    ->label('Group Leader')
+                    ->relationship('leader', 'name')
+                    ->searchable()
+                    ->preload(),
+
                 TextInput::make('external_url')
                     ->label('External URL')
                     ->url()

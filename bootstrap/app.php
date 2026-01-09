@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->command('avatars:resize')->dailyAt('01:00');
+        $schedule->command('projects:randomize-rankings')->dailyAt('02:00');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

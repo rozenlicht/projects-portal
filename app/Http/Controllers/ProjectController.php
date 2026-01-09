@@ -104,7 +104,7 @@ class ProjectController extends Controller
             });
         }
 
-        $projects = $query->inRandomOrder()->get();
+        $projects = $query->orderByRaw('COALESCE(random_ranking, 999999)')->get();
 
         // Get tags for filters
         $natureTags = Tag::where('category', TagCategory::Nature->value)

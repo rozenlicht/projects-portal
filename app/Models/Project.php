@@ -32,6 +32,7 @@ class Project extends Model
         'project_owner_id',
         'organization_id',
         'publication_status',
+        'random_ranking',
     ];
 
     protected $casts = [

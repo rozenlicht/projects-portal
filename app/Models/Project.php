@@ -49,38 +49,7 @@ class Project extends Model
             }
         });
 
-        static::saving(function (Project $project) {
-            // Ensure the first supervisor is an internal staff supervisor.
-            $project->loadMissing('supervisorLinks.supervisor.roles');
-
-            $firstSupervisorLink = $project->supervisorLinks
-                ->sortBy('order_rank')
-                ->first();
-
-            $isValid = false;
-
-            if ($firstSupervisorLink && !$firstSupervisorLink->isExternal()) {
-                $supervisor = $firstSupervisorLink->supervisor;
-
-                if ($supervisor instanceof User && $supervisor->hasRole('Staff member - supervisor')) {
-                    $isValid = true;
-                }
-            }
-
-            if (! $isValid) {
-                // Also show a filament notification
-                Notification::make()
-                    ->title('Error saving this project')
-                    ->body('The first supervisor must be a TU/e staff member.')
-                    ->danger()
-                    ->send();
-                throw ValidationException::withMessages([
-                    'supervisorLinks' => 'The first supervisor must be a TU/e staff member.',
-                ]);
-            }
-        });
-
-        static::saved(function ($project) {
+        static::saved(function (Project $project) {
             if (empty($project->project_number)) {
                 $project->generateProjectNumber();
             }

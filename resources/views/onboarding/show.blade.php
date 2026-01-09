@@ -103,10 +103,13 @@
                         <select id="group_id" 
                                 name="group_id" 
                                 required
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#7fabc9] focus:border-[#7fabc9] sm:text-sm @error('group_id') border-red-500 @enderror">
+                                @if($user->group_id)
+                                    disabled
+                                @endif
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#7fabc9] focus:border-[#7fabc9] sm:text-sm @if($user->group_id) bg-gray-100 @enderror @error('group_id') border-red-500 @enderror">
                             <option value="">-- Please select a group --</option>
                             @foreach($groups as $group)
-                                <option value="{{ $group['id'] }}" {{ old('group_id') == $group['id'] ? 'selected' : '' }}>
+                                <option value="{{ $group['id'] }}" {{ old('group_id', $user->group_id) == $group['id'] ? 'selected' : '' }}>
                                     {{ $group['name'] }}
                                 </option>
                             @endforeach

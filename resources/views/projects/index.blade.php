@@ -155,10 +155,10 @@
 
                         @if ($project->featured_image)
                             <img src="{{ \Illuminate\Support\Facades\Storage::url($project->featured_image) }}"
-                                alt="{{ $project->name }}" class="w-full h-40 sm:h-48 object-cover">
+                                alt="{{ $project->name }}" class="w-full aspect-[592/192] object-cover">
                         @else
                             <div
-                                class="w-full h-40 sm:h-48 bg-gradient-to-br from-[#7fabc9] to-[#5a8ba8] flex items-center justify-center">
+                                class="w-full aspect-[592/192] bg-gradient-to-br from-[#7fabc9] to-[#5a8ba8] flex items-center justify-center">
                                 <span
                                     class="text-white text-xl sm:text-2xl font-bold">{{ substr($project->name, 0, 1) }}</span>
                             </div>
@@ -268,10 +268,6 @@
                         </div>
                     </a>
                 @endforeach
-            </div>
-
-            <div class="mt-6 sm:mt-8">
-                {{ $projects->links() }}
             </div>
         @else
             <div class="text-center py-8 sm:py-12">

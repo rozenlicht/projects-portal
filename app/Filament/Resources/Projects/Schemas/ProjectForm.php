@@ -82,7 +82,7 @@ class ProjectForm
                     ->image()
                     ->directory('projects')
                     ->disk('public')
-                    ->helperText('The featured image of the project. The recommended size is 517 x 192 pixels.')
+                    ->helperText('The featured image of the project. The recommended size is 592 x 192 pixels.')
                     ->maxSize(5120)
                     ->imageEditor(),
 
@@ -196,8 +196,10 @@ class ProjectForm
                                         if (!is_array($value) || count($value) === 0) {
                                             return; // let minItems(1) handle empties
                                         }
-                            
-                                        $first = $value[0] ?? null;
+
+                                        $supervisorLinks = collect($value);
+                                        $first = $supervisorLinks->first() ?? null;
+
                                         if (!is_array($first)) {
                                             return;
                                         }
@@ -206,25 +208,28 @@ class ProjectForm
                             
                                         // Only enforce role for internal first supervisor
                                         if ($type !== 'internal') {
+                                            $fail('The first supervisor must be an internal TU/e supervisor.');
                                             return;
                                         }
                             
                                         $supervisorId = $first['supervisor_id'] ?? null;
                                         if (!$supervisorId) {
-                                            dd($user);
                                             $fail('The first supervisor must be an internal TU/e supervisor.');
                                             return;
                                         }
                             
                                         $user = \App\Models\User::find($supervisorId);
                                         if (!$user || !$user->hasRole('Staff member - supervisor')) {
-                                            dd($user);
                                             $fail("The first supervisor must be a TU/e staff member.");
                                         }
                                     };
                                 },
                             ])
                             ->default(fn($record) => $record?->id ? [] : [
+                                [
+                                    'supervisor_type' => User::class,
+                                    'supervisor_id' => Auth::user()->group->group_leader_id,
+                                ],
                                 [
                                     'supervisor_type' => User::class,
                                     'supervisor_id' => Auth::id(),

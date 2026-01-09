@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 
 class OnboardingController extends Controller
@@ -52,7 +53,7 @@ class OnboardingController extends Controller
 
         $validated = $request->validate([
             'password' => ['required', 'confirmed', Password::defaults()],
-            'group_id' => ['required', 'exists:groups,id'],
+            'group_id' => ['exists:groups,id', Rule::requiredIf(!$user->group_id)],
             'avatar' => ['nullable', 'image', 'max:2048'],
         ]);
 
@@ -60,7 +61,9 @@ class OnboardingController extends Controller
         $user->password = Hash::make($validated['password']);
         
         // Update group
-        $user->group_id = $validated['group_id'];
+        if (isset($validated['group_id']) && $validated['group_id']) {
+            $user->group_id = $validated['group_id'];
+        }
         
         // Handle avatar upload
         if ($request->hasFile('avatar')) {

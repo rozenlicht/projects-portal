@@ -42,16 +42,15 @@ class ProjectPolicy
             return true;
         }
 
+        // Creators can update their own projects
+        if ($project->created_by_id === $user->id) {
+            return true;
+        }
+
         // Researchers can update projects owned by their group leader or projects they supervise
-        if ($user->hasRole('Researcher')) {
-            // Check if project is owned by their group leader
-            $groupLeaderId = $user->group?->group_leader_id;
-            if ($groupLeaderId && $project->project_owner_id === $groupLeaderId) {
-                return true;
-            }
-            
+        if ($user->hasRole('Researcher')) {           
             // Check if user is a supervisor of the project
-            return $project->supervisors->contains($user->id);
+            return $project->supervisorLinks()->where('supervisor_id', $user->id)->exists();
         }
 
         // Staff member - supervisors can update their own projects or projects with supervisors in groups they lead
@@ -75,7 +74,6 @@ class ProjectPolicy
                 }
             }
         }
-
         return false;
     }
 
@@ -84,8 +82,22 @@ class ProjectPolicy
      */
     public function delete(User $user, Project $project): bool
     {
-        // Only administrators can delete projects
-        return $user->hasRole('Administrator');
+        // Administrators can delete all projects
+        if ($user->hasRole('Administrator')) {
+            return true;
+        }
+
+        // Staff member - supervisors can delete their own projects
+        if ($user->hasRole('Staff member - supervisor') && $project->project_owner_id === $user->id) {
+            return true;
+        }
+
+        // Creators can delete their own projects
+        if ($user->hasRole('Researcher') && $project->created_by_id === $user->id) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

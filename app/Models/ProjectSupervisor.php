@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Validation\ValidationException;
 
 class ProjectSupervisor extends Model
 {
@@ -22,9 +24,44 @@ class ProjectSupervisor extends Model
         parent::boot();
 
         static::saved(function ($projectSupervisor) {
-            // Generate project number if project doesn't have one yet
-            if ($projectSupervisor->project && empty($projectSupervisor->project->project_number)) {
-                $projectSupervisor->project->generateProjectNumber();
+            // Validate that the first supervisor is an internal staff supervisor
+            // This works for both creating and updating projects
+            // We validate whenever any supervisor is saved to catch order changes
+            if ($projectSupervisor->project) {
+                $projectSupervisor->project->loadMissing('supervisorLinks.supervisor.roles');
+
+                $firstSupervisorLink = $projectSupervisor->project->supervisorLinks
+                    ->sortBy('order_rank')
+                    ->first();
+
+                if ($firstSupervisorLink) {
+                    $isValid = false;
+
+                    if (!$firstSupervisorLink->isExternal()) {
+                        $supervisor = $firstSupervisorLink->supervisor;
+
+                        if ($supervisor instanceof User && $supervisor->hasRole('Staff member - supervisor')) {
+                            $isValid = true;
+                        }
+                    }
+
+                    if (! $isValid) {
+                        // Also show a filament notification
+                        Notification::make()
+                            ->title('Error saving this project')
+                            ->body('The first supervisor must be a TU/e staff member.')
+                            ->danger()
+                            ->send();
+                        throw ValidationException::withMessages([
+                            'supervisorLinks' => 'The first supervisor must be a TU/e staff member.',
+                        ]);
+                    }
+                }
+
+                // Generate project number if project doesn't have one yet
+                if (empty($projectSupervisor->project->project_number)) {
+                    $projectSupervisor->project->generateProjectNumber();
+                }
             }
         });
     }

@@ -124,12 +124,18 @@ class ProjectController extends Controller
 
         $supervisors = ProjectSupervisor::with(['supervisor'])->get();
         $supervisors = $supervisors->map(function ($supervisor) {
+            // Generate slug: for internal supervisors use the user's slug, for external use slugified name
+            $slug = $supervisor->isExternal()
+                ? strtolower(str_replace(' ', '-', $supervisor->external_supervisor_name))
+                : ($supervisor->supervisor?->slug ?? '');
+            
             return [
                 'id' => $supervisor->id,
                 'name' => $supervisor->name,
+                'slug' => $slug,
                 'type' => $supervisor->supervisor_type,
             ];
-        });
+        })->unique('slug')->values();
 
         return view('projects.index', [
             'projects' => $projects,

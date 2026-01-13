@@ -76,18 +76,18 @@
                     </select>
                 </div>
 
-                {{-- <div class="flex flex-col w-full sm:w-auto">
+                <div class="flex flex-col w-full sm:w-auto">
                     <label for="supervisor-filter" class="text-xs font-medium text-gray-600 mb-1">Supervisor</label>
                     <select id="supervisor-filter" onchange="updateFilters('supervisor', this.value)"
                         class="border border-gray-300 rounded-md px-3 sm:px-4 py-2 text-sm focus:ring-[#7fabc9] focus:border-[#7fabc9] w-full">
                         <option value="">All</option>
                         @foreach ($supervisors as $supervisor)
-                            <option value="{{ $supervisor->slug }}"
-                                {{ request('supervisor') === $supervisor->slug ? 'selected' : '' }}>{{ $supervisor->name }}
+                            <option value="{{ $supervisor['slug'] }}"
+                                {{ request('supervisor') === $supervisor['slug'] ? 'selected' : '' }}>{{ $supervisor['name'] }}
                             </option>
                         @endforeach
                     </select>
-                </div> --}}
+                </div>
 
                 <div class="flex flex-col w-full sm:w-auto">
                     <label for="with-company-filter" class="text-xs font-medium text-gray-600 mb-1">In cooperation with a

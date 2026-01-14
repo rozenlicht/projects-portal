@@ -17,11 +17,7 @@ class CreateProject extends CreateRecord
     protected function getFormActions(): array
     {
         return [
-            ...parent::getFormActions(),
-            Action::make('saveAsConcept')
-                ->label('Save as concept')
-                ->color('gray')
-                ->action('saveAsConcept'),
+            ...parent::getFormActions()
         ];
     }
 

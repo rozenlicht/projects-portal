@@ -64,24 +64,21 @@ class ProjectController extends Controller
         }
 
         if ($supervisorSlug) {
-            // Supervisor is a polymorphic relationship, so we need to get the supervisor by the slug via projectSupervisor->supervisor
-            // For external supervisors, we'll search by external_supervisor_name (slugified)
-            $supervisor = ProjectSupervisor::with(['supervisor'])
-                ->where(function ($q) use ($supervisorSlug) {
-                    $q->whereHas('supervisor', function ($subQ) use ($supervisorSlug) {
-                        $subQ->where('slug', $supervisorSlug);
-                    })
-                    ->orWhere(function ($subQ) use ($supervisorSlug) {
-                        $subQ->whereNull('supervisor_type')
-                            ->whereRaw('LOWER(REPLACE(external_supervisor_name, " ", "-")) = ?', [strtolower($supervisorSlug)]);
-                    });
-                })
-                ->first();
-            if ($supervisor) {
-                $query->whereHas('supervisorLinks', function ($q) use ($supervisor) {
-                    $q->where('project_supervisor.id', $supervisor->id);
+            // Filter by internal supervisors only (User model)
+            $matchingUserIds = User::where('slug', $supervisorSlug)->pluck('id');
+            
+            if ($matchingUserIds->isNotEmpty()) {
+                // Filter projects that have a supervisor matching the slug
+                $query->whereHas('supervisorLinks', function ($q) use ($matchingUserIds) {
+                    $q->where('supervisor_type', User::class)
+                        ->whereIn('supervisor_id', $matchingUserIds);
                 });
-                $supervisorName = $supervisor->name;
+                
+                // Get supervisor name for display
+                $supervisor = User::where('slug', $supervisorSlug)->first();
+                if ($supervisor) {
+                    $supervisorName = $supervisor->name;
+                }
             }
         }
 
@@ -122,12 +119,14 @@ class ProjectController extends Controller
             ->orderBy('name')
             ->get();
 
-        $supervisors = ProjectSupervisor::with(['supervisor'])->get();
+        // Only get internal supervisors (User model)
+        $supervisors = ProjectSupervisor::with(['supervisor'])
+            ->where('supervisor_type', User::class)
+            ->whereNotNull('supervisor_id')
+            ->get();
         $supervisors = $supervisors->map(function ($supervisor) {
-            // Generate slug: for internal supervisors use the user's slug, for external use slugified name
-            $slug = $supervisor->isExternal()
-                ? strtolower(str_replace(' ', '-', $supervisor->external_supervisor_name))
-                : ($supervisor->supervisor?->slug ?? '');
+            // Use the user's slug for internal supervisors
+            $slug = $supervisor->supervisor?->slug ?? '';
             
             return [
                 'id' => $supervisor->id,
@@ -135,6 +134,9 @@ class ProjectController extends Controller
                 'slug' => $slug,
                 'type' => $supervisor->supervisor_type,
             ];
+        })->filter(function ($supervisor) {
+            // Filter out entries without a valid slug
+            return !empty($supervisor['slug']);
         })->unique('slug')->values();
 
         return view('projects.index', [

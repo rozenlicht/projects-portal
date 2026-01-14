@@ -19,8 +19,13 @@
 
     <footer class="bg-gray-50 border-t border-gray-200 mt-8 sm:mt-12">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-            <div class="text-center text-xs sm:text-sm text-gray-600">
+            <div class="text-center text-xs sm:text-sm text-gray-600 space-y-2">
                 <p>&copy; {{ date('Y') }} Eindhoven University of Technology. All rights reserved.</p>
+                <p>
+                    <a href="{{ route('privacy') }}" class="text-[#7fabc9] hover:underline">Privacy Policy</a>
+                    <span class="mx-2">|</span>
+                    <a href="{{ route('privacy', ['lang' => 'nl']) }}" class="text-[#7fabc9] hover:underline">Privacyverklaring</a>
+                </p>
             </div>
         </div>
     </footer>

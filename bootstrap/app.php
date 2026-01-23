@@ -18,6 +18,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->command('avatars:resize')->dailyAt('01:00');
         $schedule->command('projects:randomize-rankings')->dailyAt('02:00');
     })
-    ->withExceptions(function (Exceptions $exceptions): void {
-        //
+    ->withExceptions(function (Exceptions $exceptions) {
+        \Spatie\LaravelFlare\Facades\Flare::handles($exceptions);
     })->create();

@@ -25,15 +25,20 @@
                 van de Technische Universiteit Eindhoven (TU/e).
             </p>
             <p>
+                Het Portaal ondersteunt studenten die zijn ingeschreven bij een opleiding bij het kiezen van een afstudeer-/thesisproject.
                 Het Portaal is ontworpen om zo min mogelijk persoonsgegevens te verwerken. Wij maken geen gebruikersprofielen aan en gebruiken geen tracking
-                of analytics om bezoekersgedrag te analyseren.
+                of analytics om bezoekersgedrag te analyseren of te profileren.
             </p>
         </section>
 
         <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
             <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">2. Verantwoordelijke voor de verwerking</h2>
+            <p class="mb-3">
+                De <strong>TU/e Executive Board (College van Bestuur)</strong> is verwerkingsverantwoordelijke in de zin van de AVG voor de verwerkingen die
+                in deze privacyverklaring worden beschreven. De CEM Divisie beheert het Portaal namens TU/e.
+            </p>
             <p class="mb-2">
-                De verwerkingsverantwoordelijke voor dit Portaal is:
+                Correspondentieadres:
             </p>
             <p class="mb-2">
                 <strong>Technische Universiteit Eindhoven (TU/e)</strong><br>
@@ -48,7 +53,8 @@
                 <strong>J. (Joris) Remmers</strong>.
             </p>
             <p>
-                TU/e heeft een Functionaris Gegevensbescherming (FG). U kunt de FG bereiken via: <strong>privacy@tue.nl</strong>.
+                Voor vragen of het uitoefenen van uw privacyrechten: <strong>privacy@tue.nl</strong>.<br>
+                Voor klachten: <strong>dataprotectionofficer@tue.nl</strong>.
             </p>
         </section>
 
@@ -66,7 +72,7 @@
                 <li>SURFconext verifieert uw identiteit via uw thuisinstelling (bijv. TU/e).</li>
                 <li>Na succesvolle authenticatie stuurt SURFconext het Portaal een SAML-assertie met de minimaal noodzakelijke attributen.</li>
                 <li>
-                    Wij verwerken uitsluitend de minimaal noodzakelijke gegevens voor affiliatieverificatie, zoals:
+                    Wij verwerken uitsluitend de minimaal noodzakelijke gegevens voor affiliatieverificatie en toegangsbeheer, zoals:
                     <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
                         <li>Een persistente identificatiecode (pseudoniem) om de sessie te koppelen.</li>
                         <li>Institutionele affiliatie (bijv. student/medewerker) om toegang te verlenen.</li>
@@ -86,16 +92,16 @@
                 wordt verstrekt (zoals een persistente identificatiecode en affiliatie) om te controleren of u toegang mag krijgen.
             </p>
             <p class="mb-3">
-                Deze authenticatiegegevens worden uitsluitend gebruikt voor het verlenen van toegang en worden niet gebruikt voor analyse, marketing, tracking
-                of profilering.
+                Deze authenticatiegegevens worden uitsluitend gebruikt voor het verlenen van toegang en beveiliging. Zij worden niet gebruikt voor tracking,
+                profilering of analyse van individueel gebruik.
             </p>
             <p class="mb-3">
-                Informatie die u invoert via filters of zoekfunctionaliteit (zoals projecttype, tags, secties of andere zoekcriteria) wordt niet als persoonsgegeven
-                opgeslagen of gekoppeld aan uw identiteit.
+                Informatie die u invoert via filters of zoekfunctionaliteit (zoals projecttype, tags, secties of andere zoekcriteria) wordt niet duurzaam opgeslagen
+                als persoonsgegeven en wordt niet gekoppeld aan uw identiteit of gebruikt voor tracking/profilering.
             </p>
             <p>
-                Let op: technische logbestanden (zoals webserver- en foutlogs) kunnen tijdelijk IP-adressen en technische metadata bevatten ten behoeve van
-                beveiliging, misbruikpreventie en foutopsporing. Deze gegevens worden niet gebruikt om u te identificeren of uw gedrag te volgen.
+                Technische logbestanden (zoals webserver- en foutlogs) kunnen tijdelijk IP-adressen en technische metadata bevatten ten behoeve van beveiliging,
+                misbruikpreventie en foutopsporing. Deze gegevens worden niet gebruikt voor tracking of profilering.
             </p>
         </section>
 
@@ -107,11 +113,11 @@
             <ul class="list-disc list-inside mb-3 space-y-2 ml-4">
                 <li>
                     <strong>Affiliatieverificatie en toegangsbeheer:</strong>
-                    om te verifiëren of u lid bent van de TU/e (of een geautoriseerde instelling) en om toegang tot het Portaal te verlenen.
+                    om te verifiëren of u lid bent van de TU/e (of een geautoriseerde instelling) en om toegang te verlenen tot het Portaal.
                     <br>
                     <span class="text-gray-700">
-                        Rechtsgrond: uitvoering van een taak van algemeen belang (artikel 6 lid 1 sub e AVG), namelijk het aanbieden van een intern onderwijs-
-                        en onderzoeksportaal, en subsidiair het gerechtvaardigd belang bij het beveiligen van toegang tot diensten uitsluitend voor geautoriseerde gebruikers.
+                        Rechtsgrond: uitvoering van een taak van algemeen belang (artikel 6 lid 1 sub e AVG), namelijk het ondersteunen van onderwijsactiviteiten
+                        voor ingeschreven studenten bij het kiezen van een afstudeer-/thesisproject, en het veilig aanbieden van een intern Portaal.
                     </span>
                 </li>
                 <li>
@@ -119,17 +125,18 @@
                     om het Portaal veilig en betrouwbaar te laten functioneren, misbruik te voorkomen en technische fouten op te sporen.
                     <br>
                     <span class="text-gray-700">
-                        Rechtsgrond: uitvoering van een taak van algemeen belang (artikel 6 lid 1 sub e AVG) en/of gerechtvaardigd belang (artikel 6 lid 1 sub f AVG).
+                        Rechtsgrond: uitvoering van een taak van algemeen belang (artikel 6 lid 1 sub e AVG) en, waar passend, het gerechtvaardigd belang
+                        (artikel 6 lid 1 sub f AVG) bij het beveiligen van systemen en diensten.
                     </span>
                 </li>
             </ul>
             <p>
-                Het Portaal maakt geen profielen aan en voert geen tracking of gedragsanalyse uit.
+                Het Portaal maakt geen gebruikersprofielen aan en gebruikt geen tracking of analytics voor gedragsanalyse of profilering.
             </p>
         </section>
 
         <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
-            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">6. Delen van gegevens en derden</h2>
+            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">6. Delen van gegevens en toegang</h2>
             <p class="mb-3">
                 Wij delen geen persoonsgegevens voor commerciële doeleinden en verstrekken geen persoonsgegevens aan derden voor tracking, marketing of profilering.
             </p>
@@ -137,11 +144,20 @@
                 Voor authenticatie maken wij gebruik van SURFconext. Hierbij worden noodzakelijke attributen vanuit uw thuisinstelling via SURFconext aan het Portaal
                 doorgegeven om toegang te verlenen.
             </p>
+
+            <h3 class="font-heading text-gray-900 mt-4 mb-2 text-lg sm:text-xl">6.1 Toegang binnen TU/e</h3>
             <p class="mb-3">
-                Wij kunnen gebruik maken van dienstverleners (bijv. hostingproviders) voor technische infrastructuur. Deze dienstverleners verwerken eventuele
-                technische gegevens uitsluitend in opdracht van TU/e en onder passende contractuele en organisatorische maatregelen (zoals verwerkersovereenkomsten),
-                voor zover dat van toepassing is.
+                Binnen TU/e kunnen functionele en technische beheerders toegang hebben tot beheerfunctionaliteiten en (waar noodzakelijk) technische gegevens
+                voor beheer, ondersteuning, beveiliging en foutopsporing. Deze toegang is beperkt tot wat noodzakelijk is voor de taakuitvoering en vindt plaats
+                onder interne autorisaties en toegangscontroles.
             </p>
+
+            <h3 class="font-heading text-gray-900 mt-4 mb-2 text-lg sm:text-xl">6.2 Dienstverleners (verwerkers)</h3>
+            <p class="mb-3">
+                Wij kunnen gebruik maken van dienstverleners (bijv. hostingproviders) voor technische infrastructuur. Indien deze partijen persoonsgegevens verwerken
+                in opdracht van TU/e, worden passende afspraken gemaakt conform TU/e-beleid (zoals een verwerkersovereenkomst) en passende beveiligingsmaatregelen.
+            </p>
+
             <p>
                 Wij verkopen, verhuren of commercialiseren geen persoonsgegevens.
             </p>
@@ -158,7 +174,8 @@
                 bewaard en periodiek verwijderd conform de geldende TU/e-beleidstermijnen en operationele noodzaak.
             </p>
             <p>
-                Omdat het Portaal geen gebruikersprofielen bijhoudt, zijn er in de praktijk doorgaans geen persoonsgegevens om op verzoek te verwijderen uit het Portaal.
+                Omdat het Portaal geen gebruikersprofielen bijhoudt, zijn er in de praktijk doorgaans geen duurzaam opgeslagen persoonsgegevens om op verzoek te verwijderen
+                uit het Portaal.
             </p>
         </section>
 
@@ -173,18 +190,20 @@
                 <li>Recht op gegevenswissing</li>
                 <li>Recht op beperking van de verwerking</li>
                 <li>Recht van bezwaar</li>
+                <li>Recht op overdraagbaarheid van gegevens (waar van toepassing)</li>
+                <li>Recht op informatie over geautomatiseerde besluitvorming en profilering (voor zover van toepassing)</li>
             </ul>
             <p class="mb-3">
-                Omdat het Portaal geen gebruikersprofielen of duurzaam opgeslagen persoonsgegevens bijhoudt, zullen deze rechten in de praktijk meestal beperkt
-                toepasbaar zijn binnen het Portaal zelf. Indien uw vraag betrekking heeft op authenticatiegegevens bij uw thuisinstelling of SURFconext, kan het
-                nodig zijn om uw verzoek (deels) via die partijen te laten verlopen.
+                Omdat het Portaal geen gebruikersprofielen aanmaakt en geen persoonsgegevens duurzaam opslaat, zullen sommige rechten in de praktijk beperkt toepasbaar
+                zijn binnen het Portaal zelf. Indien uw vraag betrekking heeft op authenticatiegegevens bij uw thuisinstelling of SURFconext, kan het nodig zijn om uw verzoek
+                (deels) via die partijen te laten verlopen.
             </p>
             <p class="mb-3">
-                Voor vragen over uw rechten of onze gegevensverwerkingspraktijken neemt u contact op met: <strong>J. (Joris) Remmers</strong>.
-                U kunt ook contact opnemen met de FG van TU/e via: <strong>privacy@tue.nl</strong>.
+                Voor vragen of het uitoefenen van uw privacyrechten kunt u contact opnemen met: <strong>privacy@tue.nl</strong>.
             </p>
             <p>
-                U heeft het recht om een klacht in te dienen bij de Autoriteit Persoonsgegevens als u van mening bent dat uw gegevensbeschermingsrechten zijn geschonden.
+                U heeft het recht om een klacht in te dienen bij de Functionaris Gegevensbescherming via: <strong>dataprotectionofficer@tue.nl</strong>,
+                en bij de Autoriteit Persoonsgegevens als u van mening bent dat uw gegevensbeschermingsrechten zijn geschonden.
             </p>
         </section>
 
@@ -201,8 +220,8 @@
                 <li>Veilige hostinginfrastructuur en hardening waar passend</li>
             </ul>
             <p>
-                Geen enkele methode van verzending of opslag is 100% veilig. Wij kunnen absolute veiligheid niet garanderen, maar doen ons best om passende maatregelen
-                te treffen conform de stand van de techniek en het risico.
+                Geen enkele methode van verzending of opslag is 100% veilig. Wij kunnen absolute veiligheid niet garanderen, maar treffen passende maatregelen
+                conform de stand van de techniek en het risico.
             </p>
         </section>
 
@@ -216,7 +235,7 @@
                 <li>Het waarborgen van de correcte en veilige werking van het Portaal</li>
             </ul>
             <p class="mb-3">
-                Wij gebruiken geen cookies voor tracking, marketing of gedragsanalyse. De sessiecookies zijn bedoeld voor de actieve sessie en niet om bezoekers
+                Wij gebruiken geen cookies voor tracking, marketing of profilering. De sessiecookies zijn bedoeld voor de actieve sessie en niet om bezoekers
                 over websites heen te volgen.
             </p>
             <p>
@@ -251,7 +270,8 @@
                 Technische Universiteit Eindhoven
             </p>
             <p class="mb-2">
-                U kunt ook contact opnemen met de Functionaris Gegevensbescherming (FG) van TU/e via: <strong>privacy@tue.nl</strong>.
+                Voor vragen of het uitoefenen van uw privacyrechten: <strong>privacy@tue.nl</strong>.<br>
+                Voor klachten: <strong>dataprotectionofficer@tue.nl</strong>.
             </p>
             <p>
                 Voor technische ondersteuning kunt u contact opnemen met: <strong>B. (Bart) Verhaegh</strong>

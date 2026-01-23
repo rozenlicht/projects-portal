@@ -23,6 +23,48 @@ class ProjectSupervisor extends Model
     {
         parent::boot();
 
+        static::creating(function ($projectSupervisor) {
+            // Check for duplicate supervisors before creating
+            if ($projectSupervisor->project_id) {
+                $query = static::where('project_id', $projectSupervisor->project_id);
+                
+                if ($projectSupervisor->isExternal()) {
+                    // Check for duplicate external supervisor
+                    $exists = $query->whereNull('supervisor_type')
+                        ->whereNull('supervisor_id')
+                        ->where('external_supervisor_name', $projectSupervisor->external_supervisor_name)
+                        ->exists();
+                    
+                    if ($exists) {
+                        Notification::make()
+                            ->title('Error saving supervisor')
+                            ->body('This external supervisor is already assigned to this project.')
+                            ->danger()
+                            ->send();
+                        throw ValidationException::withMessages([
+                            'supervisorLinks' => 'This external supervisor is already assigned to this project.',
+                        ]);
+                    }
+                } else {
+                    // Check for duplicate internal supervisor
+                    $exists = $query->where('supervisor_type', $projectSupervisor->supervisor_type)
+                        ->where('supervisor_id', $projectSupervisor->supervisor_id)
+                        ->exists();
+                    
+                    if ($exists) {
+                        Notification::make()
+                            ->title('Error saving supervisor')
+                            ->body('This supervisor is already assigned to this project.')
+                            ->danger()
+                            ->send();
+                        throw ValidationException::withMessages([
+                            'supervisorLinks' => 'This supervisor is already assigned to this project.',
+                        ]);
+                    }
+                }
+            }
+        });
+
         static::saved(function ($projectSupervisor) {
             // Validate that the first supervisor is an internal staff supervisor
             // This works for both creating and updating projects

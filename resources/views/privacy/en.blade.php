@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('title', 'Privacy Policy')
+@section('title', 'Privacy Statement')
 
 @section('content')
 <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
     <div class="mb-6">
-        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-heading text-gray-900 mb-3 sm:mb-4">Privacy Policy</h1>
+        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-heading text-gray-900 mb-3 sm:mb-4">Privacy Statement</h1>
         <p class="text-sm text-gray-600 mb-4">
-            Last updated: {{ date('F j, Y') }}
+            Last updated: {{ date('j F Y') }}
         </p>
         <div class="mb-4">
             <a href="{{ route('privacy', ['lang' => 'nl']) }}" class="text-sm text-[#7fabc9] hover:underline">
@@ -15,188 +15,261 @@
             </a>
         </div>
     </div>
-    
+
     <div class="space-y-6 text-sm sm:text-base text-gray-700">
         <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
             <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">1. Introduction</h2>
             <p class="mb-3">
-                This privacy policy explains how the CEM Projects Portal ("we", "our", or "the Portal") collects, uses, and protects your personal data. The Portal is operated by the Computational and Experimental Mechanics (CEM) Division within the Faculty of Mechanical Engineering at Eindhoven University of Technology (TU/e).
-            </p>
-            <p class="mb-3">
-                <strong>Scope:</strong> This privacy policy applies exclusively to the public frontend of the Portal (the publicly accessible website where users browse and search for projects). This policy does not apply to any administrative interfaces, backend systems, or content management systems used by administrators to manage the Portal.
+                This privacy statement explains how the CEM Projects Portal (the &quot;Portal&quot;) processes and protects personal data.
+                The Portal is managed by the Computational and Experimental Mechanics (CEM) Division within the Department of Mechanical Engineering
+                of Eindhoven University of Technology (TU/e).
             </p>
             <p>
-                This policy applies to all users of the public frontend of the Portal.
+                The Portal supports students enrolled in an academic program in selecting a thesis/graduation project.
+                The Portal is designed to process as little personal data as possible. We do not create user profiles and we do not use tracking
+                or analytics to analyse or profile visitor behaviour.
             </p>
         </section>
 
         <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
-            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">2. Data Controller</h2>
+            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">2. Controller</h2>
+            <p class="mb-3">
+                The <strong>TU/e Executive Board</strong> is the controller within the meaning of the GDPR for the processing activities described in this privacy statement.
+                The CEM Division manages the Portal on behalf of TU/e.
+            </p>
             <p class="mb-2">
-                The data controller for this Portal is:
+                Correspondence address:
             </p>
             <p class="mb-2">
                 <strong>Eindhoven University of Technology (TU/e)</strong><br>
                 Computational and Experimental Mechanics (CEM) Division<br>
                 Department of Mechanical Engineering<br>
-                P.O. Box 513<br>
+                PO Box 513<br>
                 5600 MB Eindhoven<br>
                 The Netherlands
             </p>
+            <p class="mb-3">
+                For questions regarding this privacy statement or the processing within the Portal, you may contact:
+                <strong>J. (Joris) Remmers</strong>.
+            </p>
             <p>
-                For questions regarding this privacy policy, please contact: <strong>J. (Joris) Remmers</strong>
+                For questions or exercising your privacy rights: <strong>privacy@tue.nl</strong>.<br>
+                For complaints: <strong>dataprotectionofficer@tue.nl</strong>.
             </p>
         </section>
 
         <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
             <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">3. Authentication and Identity Provider</h2>
             <p class="mb-3">
-                The Portal uses SURF CONext for authentication via Security Assertion Markup Language (SAML). SURF CONext is a trusted identity provider service that enables secure single sign-on (SSO) for educational and research institutions in the Netherlands.
+                The Portal uses SURFconext for authentication via Security Assertion Markup Language (SAML). SURFconext enables secure single sign-on (SSO)
+                for education and research institutions in the Netherlands.
             </p>
             <p class="mb-3">
-                When you log in to the Portal:
+                When you sign in to the Portal:
             </p>
             <ul class="list-disc list-inside mb-3 space-y-2 ml-4">
-                <li>You are redirected to SURF CONext for authentication</li>
-                <li>SURF CONext verifies your identity through your home institution (TU/e)</li>
-                <li>Upon successful authentication, SURF CONext sends us a SAML assertion containing your identity information</li>
-                <li>We receive and process only the following information from SURF CONext:
+                <li>You are redirected to SURFconext for authentication.</li>
+                <li>SURFconext verifies your identity via your home institution (e.g. TU/e).</li>
+                <li>After successful authentication, SURFconext provides the Portal with a SAML assertion containing the minimum necessary attributes.</li>
+                <li>
+                    We only process the minimum required data for affiliation verification and access control, such as:
                     <ul class="list-disc list-inside ml-6 mt-2 space-y-1">
-                        <li>Your persistent identifier</li>
-                        <li>Your institutional affiliation</li>
+                        <li>A persistent identifier (pseudonym) to link your session.</li>
+                        <li>Institutional affiliation (e.g. student/staff) to grant access.</li>
                     </ul>
                 </li>
             </ul>
             <p>
-                We do not store your password or other authentication credentials. All authentication is handled by SURF CONext and your home institution.
+                We do not store your password. Authentication is handled by SURFconext and your home institution.
             </p>
         </section>
 
         <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
-            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">4. Personal Data We Collect</h2>
+            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">4. Which personal data do we process?</h2>
             <p class="mb-3">
-                We do not save any personal information. The Portal operates in an anonymous manner, and all usage of the Portal is anonymous.
+                As a general principle, the Portal does not process personal data in the sense of creating user profiles or storing identifying information on a long-term basis.
+                However, during the authentication process we temporarily process a limited set of personal data provided via SURFconext
+                (such as a persistent identifier and affiliation) in order to verify whether you are allowed to access the Portal.
             </p>
             <p class="mb-3">
-                Authentication through SURF CONext is used solely to verify your affiliation with TU/e. The authentication information received during authentication is used only for the purpose of verifying your TU/e affiliation and is not stored in a central database.
+                This authentication data is used solely for granting access and security. It is not used for tracking, profiling, or analysing individual usage.
             </p>
             <p class="mb-3">
-                Information entered using the filters on this Portal (such as project type, tags, sections, or other search criteria) is not saved to a central database. All filter usage remains anonymous and is not associated with your identity.
+                Information entered via filters or search functionality (such as project type, tags, sections, or other search criteria) is not stored on a long-term basis
+                as personal data and is not linked to your identity or used for tracking/profiling.
             </p>
             <p>
-                We do not collect, store, or process any personal data beyond what is necessary for the anonymous verification of TU/e affiliation during the authentication process.
+                Technical logs (such as web server logs and error logs) may temporarily contain IP addresses and technical metadata for security, abuse prevention,
+                and troubleshooting purposes. This data is not used for tracking or profiling.
             </p>
         </section>
 
         <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
-            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">5. Purpose and Legal Basis for Processing</h2>
+            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">5. Purposes and legal basis</h2>
             <p class="mb-3">
-                We process authentication data for the following purpose:
+                We process data only for the following purposes:
             </p>
             <ul class="list-disc list-inside mb-3 space-y-2 ml-4">
-                <li><strong>Affiliation Verification:</strong> To verify your affiliation with TU/e and control access to the Portal. Authentication is used solely to confirm that you are a student or staff member of TU/e. The authentication data is used only during the authentication process and is not stored (legal basis: legitimate interest in providing secure access to our services for TU/e members only)</li>
+                <li>
+                    <strong>Affiliation verification and access control:</strong>
+                    to verify that you are a TU/e member (or otherwise authorised) and to grant access to the Portal.
+                    <br>
+                    <span class="text-gray-700">
+                        Legal basis: performance of a task carried out in the public interest (Article 6(1)(e) GDPR), namely supporting educational activities
+                        for enrolled students in selecting a thesis/graduation project and securely offering an internal Portal.
+                    </span>
+                </li>
+                <li>
+                    <strong>Security and continuity:</strong>
+                    to keep the Portal secure and reliable, prevent abuse, and detect and resolve technical issues.
+                    <br>
+                    <span class="text-gray-700">
+                        Legal basis: performance of a task carried out in the public interest (Article 6(1)(e) GDPR) and, where appropriate,
+                        legitimate interest (Article 6(1)(f) GDPR) in securing systems and services.
+                    </span>
+                </li>
+            </ul>
+            <p>
+                The Portal does not create user profiles and does not use tracking or analytics for behavioural analysis or profiling.
+            </p>
+        </section>
+
+        <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
+            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">6. Data sharing and access</h2>
+            <p class="mb-3">
+                We do not share personal data for commercial purposes and we do not provide personal data to third parties for tracking, marketing, or profiling.
+            </p>
+            <p class="mb-3">
+                For authentication, we use SURFconext. Necessary attributes are transferred from your home institution via SURFconext to the Portal
+                in order to grant access.
+            </p>
+
+            <h3 class="font-heading text-gray-900 mt-4 mb-2 text-lg sm:text-xl">6.1 Access within TU/e</h3>
+            <p class="mb-3">
+                Within TU/e, functional and technical administrators may have access to administrative functionality and (where required) technical data
+                for management, support, security, and troubleshooting purposes. Such access is limited to what is necessary to perform their tasks
+                and is subject to internal authorisations and access controls.
+            </p>
+
+            <h3 class="font-heading text-gray-900 mt-4 mb-2 text-lg sm:text-xl">6.2 Service providers (processors)</h3>
+            <p class="mb-3">
+                We may use external service providers (e.g. hosting providers) for technical infrastructure. If such parties process personal data on behalf of TU/e,
+                appropriate arrangements are made in line with TU/e policy (such as a data processing agreement) and appropriate security measures.
+            </p>
+
+            <p>
+                We do not sell, rent, or commercialise personal data.
+            </p>
+        </section>
+
+        <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
+            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">7. Retention periods</h2>
+            <p class="mb-3">
+                Authentication attributes processed via SURFconext are used only during sign-in and the active session and are not stored on a long-term basis
+                in a user database or profile.
+            </p>
+            <p class="mb-3">
+                Technical logs (such as web server logs and error logs) may be retained temporarily for security and troubleshooting. These logs are retained for a limited time
+                and deleted periodically in accordance with applicable TU/e retention policies and operational necessity.
+            </p>
+            <p>
+                Because the Portal does not maintain user profiles, in practice there is typically no long-term stored personal data within the Portal to delete upon request.
+            </p>
+        </section>
+
+        <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
+            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">8. Your rights</h2>
+            <p class="mb-3">
+                Under the General Data Protection Regulation (GDPR), you may have (depending on the circumstances) the following rights:
+            </p>
+            <ul class="list-disc list-inside mb-3 space-y-2 ml-4">
+                <li>Right of access</li>
+                <li>Right to rectification</li>
+                <li>Right to erasure</li>
+                <li>Right to restriction of processing</li>
+                <li>Right to object</li>
+                <li>Right to data portability (where applicable)</li>
+                <li>Rights related to automated decision-making and profiling (where applicable)</li>
             </ul>
             <p class="mb-3">
-                The Portal operates anonymously. All usage of the Portal, including browsing projects and using filters, is anonymous and no personal data is collected or stored. No profiles are created, no personal information is saved, and all interactions with the Portal remain anonymous.
-            </p>
-        </section>
-
-        <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
-            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">6. Data Sharing and Third Parties</h2>
-            <p class="mb-3">
-                We do not share personal data with third parties because we do not store any personal data. The authentication process with SURF CONext is used solely to verify your TU/e affiliation, and the authentication data is not stored or shared.
+                Because the Portal does not create user profiles and does not store personal data on a long-term basis, some rights may have limited practical applicability
+                within the Portal itself. If your request concerns authentication data held by your home institution or SURFconext, it may be necessary to handle your request
+                (partly) via those parties.
             </p>
             <p class="mb-3">
-                We may use third-party service providers (e.g., hosting providers) for technical infrastructure, but these providers do not have access to personal data as we do not store any personal data on our systems.
+                For questions or exercising your rights, please contact: <strong>privacy@tue.nl</strong>.
             </p>
             <p>
-                We do not sell, rent, or otherwise commercialize any personal data to third parties, and since we do not store personal data, there is no personal data to share.
+                You have the right to submit a complaint to the Data Protection Officer via: <strong>dataprotectionofficer@tue.nl</strong>,
+                and to the Dutch Data Protection Authority (Autoriteit Persoonsgegevens) if you believe your data protection rights have been violated.
             </p>
         </section>
 
         <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
-            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">7. Data Retention</h2>
+            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">9. Data security</h2>
             <p class="mb-3">
-                We do not retain any personal data because we do not store any personal data. The authentication data received from SURF CONext during the authentication process is used only for the purpose of verifying your TU/e affiliation and is not stored in our systems.
-            </p>
-            <p>
-                Since all usage of the Portal is anonymous and no personal data is collected or stored, there is no personal data to retain or delete.
-            </p>
-        </section>
-
-        <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
-            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">8. Your Rights</h2>
-            <p class="mb-3">
-                Under the General Data Protection Regulation (GDPR) and applicable Dutch data protection laws, you have the following rights:
-            </p>
-            <p class="mb-3">
-                However, since we do not store any personal data, most of these rights are not applicable in practice. We do not hold any personal data about you that could be accessed, rectified, erased, or ported. The authentication data is used only during the authentication process and is not stored.
-            </p>
-            <p class="mb-3">
-                If you have questions about your rights or our data processing practices, please contact: <strong>J. (Joris) Remmers</strong>
-            </p>
-            <p>
-                You have the right to lodge a complaint with the Dutch Data Protection Authority (Autoriteit Persoonsgegevens) if you believe your data protection rights have been violated.
-            </p>
-        </section>
-
-        <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
-            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">9. Data Security</h2>
-            <p class="mb-3">
-                Since we do not store any personal data in the public frontend of the Portal, there is no personal data to protect through storage security measures. However, we implement appropriate technical measures to ensure secure operation of the Portal:
+                We implement appropriate technical and organisational measures to ensure secure operation of the Portal. These measures include:
             </p>
             <ul class="list-disc list-inside mb-3 space-y-2 ml-4">
                 <li>Encryption of data in transit (HTTPS/TLS)</li>
-                <li>Secure authentication through SURF CONext</li>
+                <li>Secure authentication via SURFconext</li>
                 <li>Access controls and authentication requirements for Portal access</li>
-                <li>Regular security assessments and updates</li>
-                <li>Secure hosting infrastructure</li>
+                <li>Regular security reviews and updates</li>
+                <li>Secure hosting infrastructure and hardening where appropriate</li>
             </ul>
             <p>
-                However, no method of transmission over the internet is 100% secure, and we cannot guarantee absolute security.
+                No method of transmission or storage is 100% secure. We cannot guarantee absolute security, but we apply appropriate safeguards
+                in line with the state of the art and the level of risk.
             </p>
         </section>
 
         <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
-            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">10. Cookies and Tracking</h2>
+            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">10. Cookies and similar technologies</h2>
             <p class="mb-3">
-                The Portal uses cookies and similar technologies only for technical purposes:
+                The Portal uses only functional cookies and similar technologies that are necessary for the operation of the website, including:
             </p>
             <ul class="list-disc list-inside mb-3 space-y-2 ml-4">
-                <li>Maintaining your session and authentication state during your visit</li>
-                <li>Ensuring the Portal functions correctly</li>
+                <li>Maintaining your session and authentication status during your visit</li>
+                <li>Ensuring the correct and secure functioning of the Portal</li>
             </ul>
             <p class="mb-3">
-                We do not use cookies to track your usage, store preferences, or collect personal information. All cookie usage is anonymous and session-based.
+                We do not use cookies for tracking, marketing, or profiling. Session cookies are intended for the active session and are not used
+                to follow visitors across websites.
             </p>
             <p>
-                You can control cookies through your browser settings, though disabling certain cookies may affect Portal functionality.
+                You can manage cookies via your browser settings. Disabling certain functional cookies may affect the operation of the Portal.
             </p>
         </section>
 
         <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
-            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">11. International Data Transfers</h2>
+            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">11. International transfers</h2>
             <p>
-                Since we do not store any personal data in the public frontend of the Portal, there are no personal data transfers to consider. The authentication process with SURF CONext occurs within the European Economic Area (EEA), and no personal data is transferred outside the EEA as part of the frontend Portal functionality.
+                The Portal is intended for use within the European Economic Area (EEA). Authentication via SURFconext takes place within the EEA.
+                We do not intend to transfer personal data outside the EEA as part of the standard functionality of the Portal.
             </p>
         </section>
 
         <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
-            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">12. Changes to This Policy</h2>
+            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">12. Changes to this statement</h2>
             <p>
-                We may update this privacy policy from time to time. We will notify you of significant changes by posting the updated policy on this page and updating the "Last updated" date. We encourage you to review this policy periodically.
+                We may update this privacy statement from time to time. We will publish significant changes on this page and update the
+                &quot;Last updated&quot; date. We recommend reviewing this statement periodically.
             </p>
         </section>
 
         <section class="bg-gray-50 rounded-lg p-5 sm:p-6 lg:p-8">
-            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">13. Contact Information</h2>
+            <h2 class="text-xl sm:text-2xl font-heading text-gray-900 mb-3 sm:mb-4">13. Contact details</h2>
             <p class="mb-2">
-                If you have questions, concerns, or wish to exercise your data protection rights, please contact:
+                If you have questions or concerns about this privacy statement, or if you wish to exercise your rights, you may contact:
             </p>
             <p class="mb-2">
                 <strong>J. (Joris) Remmers</strong><br>
                 Computational and Experimental Mechanics (CEM) Division<br>
                 Eindhoven University of Technology
+            </p>
+            <p class="mb-2">
+                For questions or exercising your privacy rights: <strong>privacy@tue.nl</strong>.<br>
+                For complaints: <strong>dataprotectionofficer@tue.nl</strong>.
             </p>
             <p>
                 For technical support, please contact: <strong>B. (Bart) Verhaegh</strong>

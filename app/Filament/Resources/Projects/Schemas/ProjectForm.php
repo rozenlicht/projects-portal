@@ -83,8 +83,42 @@ class ProjectForm
                     ->directory('projects')
                     ->disk('public')
                     ->helperText('The featured image of the project. The recommended size is 592 x 192 pixels.')
-                    ->maxSize(5120)
-                    ->imageEditor(),
+                    ->imageEditor()
+                    ->rules([
+                        function ($attribute, $value, \Closure $fail) {
+                            // Skip validation if value is null or empty
+                            if (empty($value)) {
+                                return;
+                            }
+
+                            // If the file doesn't exist (e.g., cleaned up due to other validation errors),
+                            // skip size validation to avoid UnableToRetrieveMetadata errors
+                            if ($value instanceof \Livewire\Features\SupportFileUploads\TemporaryUploadedFile) {
+                                try {
+                                    // Check if file exists before trying to get size
+                                    if (!$value->exists()) {
+                                        return; // File was cleaned up, skip validation
+                                    }
+                                    
+                                    // Get file size in KB (maxSize is in KB)
+                                    $fileSize = $value->getSize() / 1024; // Convert bytes to KB
+                                    $maxSize = 5120; // 5MB in KB
+                                    
+                                    if ($fileSize > $maxSize) {
+                                        $fail("The {$attribute} must not be larger than " . ($maxSize / 1024) . " MB.");
+                                    }
+                                } catch (\League\Flysystem\UnableToRetrieveMetadata $e) {
+                                    // File metadata cannot be retrieved (file likely deleted)
+                                    // Skip validation to avoid error - this happens when file is cleaned up
+                                    // due to other validation failures
+                                    return;
+                                } catch (\Exception $e) {
+                                    // Catch any other exceptions to prevent validation errors
+                                    return;
+                                }
+                            }
+                        },
+                    ]),
 
                 Textarea::make('short_description')
                     ->label('Short Description')
@@ -221,6 +255,41 @@ class ProjectForm
                                         $user = \App\Models\User::find($supervisorId);
                                         if (!$user || !$user->hasRole('Staff member - supervisor')) {
                                             $fail("The first supervisor must be a TU/e staff member.");
+                                            return;
+                                        }
+
+                                        // Check for duplicate supervisors within the form
+                                        $seenInternal = [];
+                                        $seenExternal = [];
+                                        
+                                        foreach ($supervisorLinks as $index => $link) {
+                                            if (!is_array($link)) {
+                                                continue;
+                                            }
+                                            
+                                            $selector = $link['supervisor_type_selector'] ?? null;
+                                            
+                                            if ($selector === 'internal') {
+                                                $linkSupervisorId = $link['supervisor_id'] ?? null;
+                                                if ($linkSupervisorId) {
+                                                    $key = User::class . '-' . $linkSupervisorId;
+                                                    if (isset($seenInternal[$key])) {
+                                                        $fail("Duplicate supervisor detected. The same TU/e supervisor cannot be added multiple times.");
+                                                        return;
+                                                    }
+                                                    $seenInternal[$key] = true;
+                                                }
+                                            } elseif ($selector === 'external') {
+                                                $externalName = $link['external_supervisor_name'] ?? null;
+                                                if ($externalName) {
+                                                    $key = trim(strtolower($externalName));
+                                                    if (isset($seenExternal[$key])) {
+                                                        $fail("Duplicate supervisor detected. The same external supervisor cannot be added multiple times.");
+                                                        return;
+                                                    }
+                                                    $seenExternal[$key] = true;
+                                                }
+                                            }
                                         }
                                     };
                                 },

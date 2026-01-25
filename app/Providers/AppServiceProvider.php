@@ -26,13 +26,15 @@ class AppServiceProvider extends ServiceProvider
     {
         // Register custom students guard
         Auth::extend('students', function (Application $app, string $name, array $config) {
-            $provider = new StudentsProvider($app['session']);
-            return new StudentsGuard($provider, $app['session']);
+            $session = $app['session.store'];
+            $provider = new StudentsProvider($session);
+            return new StudentsGuard($provider, $session);
         });
 
         // Register custom students provider
         Auth::provider('students', function (Application $app, array $config) {
-            return new StudentsProvider($app['session']);
+            $session = $app['session.store'];
+            return new StudentsProvider($session);
         });
 
         LogViewer::auth(function ($request) {

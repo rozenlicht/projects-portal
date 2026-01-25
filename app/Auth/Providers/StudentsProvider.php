@@ -79,6 +79,15 @@ class StudentsProvider implements UserProvider
     }
 
     /**
+     * Rehash the user's password if required and supported.
+     */
+    public function rehashPasswordIfRequired(Authenticatable $user, array $credentials, bool $force = false): void
+    {
+        // SAML authentication doesn't use passwords, so this is a no-op
+        // This method is required by the UserProvider interface in Laravel 12+
+    }
+
+    /**
      * Store user data in session.
      */
     public function storeUser(StudentsUser $user): void

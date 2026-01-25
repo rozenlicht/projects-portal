@@ -51,8 +51,29 @@
 
         @if ($project->supervisorLinks->count() > 0)
             @php
-                $primarySupervisorLink = $project->supervisorLinks->first();
-                $primarySupervisor = $primarySupervisorLink->supervisor;
+                // Collect all groups and sections from all supervisors, maintaining order by supervisor ranking
+                $groups = collect();
+                $sections = collect();
+                $seenGroupIds = [];
+                $seenSectionIds = [];
+
+                foreach ($project->supervisorLinks as $supervisorLink) {
+                    if (!$supervisorLink->isExternal() && $supervisorLink->supervisor) {
+                        $supervisor = $supervisorLink->supervisor;
+                        
+                        // Add group if supervisor has one and we haven't seen it yet
+                        if ($supervisor->group && !in_array($supervisor->group->id, $seenGroupIds)) {
+                            $groups->push($supervisor->group);
+                            $seenGroupIds[] = $supervisor->group->id;
+                        }
+                        
+                        // Add section if supervisor's group has one and we haven't seen it yet
+                        if ($supervisor->group && $supervisor->group->section && !in_array($supervisor->group->section->id, $seenSectionIds)) {
+                            $sections->push($supervisor->group->section);
+                            $seenSectionIds[] = $supervisor->group->section->id;
+                        }
+                    }
+                }
             @endphp
             <div class="border-t border-gray-200 pt-6 sm:pt-8 mt-8 sm:mt-12">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
@@ -134,31 +155,38 @@
                                     </div>
                                 </div>
                             @endif
-                            @if (!$primarySupervisorLink->isExternal() && $primarySupervisor && $primarySupervisor->group)
+                            @if ($groups->count() > 0)
                                 <div>
-                                    <span class="text-xs sm:text-sm font-medium text-gray-600">Group:</span>
-                                    <p class="text-gray-900 text-xs sm:text-sm sm:text-base">
-                                        @if ($primarySupervisor->group->external_url)
-                                            <a href="{{ $primarySupervisor->group->external_url }}" target="_blank"
-                                                rel="noopener noreferrer"
-                                                class="text-[#7fabc9] hover:text-[#5a8ba8] text-xs sm:text-sm sm:text-base">
-                                                {{ $primarySupervisor->group->name }}
-                                            </a>
-                                        @else
-                                            {{ $primarySupervisor->group->name }}
-                                        @endif
-                                    </p>
+                                    <span class="text-xs sm:text-sm font-medium text-gray-600">Group{{ $groups->count() > 1 ? 's' : '' }}:</span>
+                                    <div class="text-gray-900 text-xs sm:text-sm sm:text-base">
+                                        @foreach ($groups as $group)
+                                            @if ($group->external_url)
+                                                <a href="{{ $group->external_url }}" target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    class="text-[#7fabc9] hover:text-[#5a8ba8] text-xs sm:text-sm sm:text-base">
+                                                    {{ $group->name }}
+                                                </a>
+                                            @else
+                                                <span>{{ $group->name }}</span>
+                                            @endif
+                                            @if (!$loop->last)
+                                                <span class="text-gray-400">, </span>
+                                            @endif
+                                        @endforeach
+                                    </div>
                                 </div>
                             @endif
-                            @if (
-                                !$primarySupervisorLink->isExternal() &&
-                                    $primarySupervisor &&
-                                    $primarySupervisor->group &&
-                                    $primarySupervisor->group->section)
+                            @if ($sections->count() > 0)
                                 <div>
-                                    <span class="text-xs sm:text-sm font-medium text-gray-600">Section:</span>
-                                    <p class="text-gray-900 text-xs sm:text-sm sm:text-base">
-                                        {{ $primarySupervisor->group->section->name }}</p>
+                                    <span class="text-xs sm:text-sm font-medium text-gray-600">Section{{ $sections->count() > 1 ? 's' : '' }}:</span>
+                                    <div class="text-gray-900 text-xs sm:text-sm sm:text-base">
+                                        @foreach ($sections as $section)
+                                            <span>{{ $section->name }}</span>
+                                            @if (!$loop->last)
+                                                <span class="text-gray-400">, </span>
+                                            @endif
+                                        @endforeach
+                                    </div>
                                 </div>
                             @endif
                         </div>

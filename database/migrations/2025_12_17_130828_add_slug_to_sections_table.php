@@ -50,15 +50,27 @@ return new class extends Migration
             // Index doesn't exist, that's fine
         }
 
-        // Now make it non-nullable
-        Schema::table('sections', function (Blueprint $table) {
-            $table->string('slug')->nullable(false)->change();
-        });
+        // Now make it non-nullable (only if it was added as nullable)
+        // If the column was created with unique() in create_sections_table, it's already not nullable
+        if (Schema::hasColumn('sections', 'slug')) {
+            try {
+                // Check if column is nullable by trying to change it
+                Schema::table('sections', function (Blueprint $table) {
+                    $table->string('slug')->nullable(false)->change();
+                });
+            } catch (\Exception $e) {
+                // Column might already be not nullable, that's fine
+            }
+        }
         
-        // Add unique index separately
-        Schema::table('sections', function (Blueprint $table) {
-            $table->unique('slug');
-        });
+        // Add unique index separately (only if it doesn't already exist)
+        try {
+            Schema::table('sections', function (Blueprint $table) {
+                $table->unique('slug');
+            });
+        } catch (\Exception $e) {
+            // Unique index already exists (e.g., from create_sections_table), that's fine
+        }
     }
 
     /**

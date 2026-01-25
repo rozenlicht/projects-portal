@@ -257,11 +257,6 @@
                                                 {{ $project->section->name }}
                                             </div>
                                         @endif
-                                        @if ($project->group)
-                                            <div class="text-xs sm:text-sm text-gray-500 sm:pl-3">
-                                                {{ $project->group->name }}
-                                            </div>
-                                        @endif
                                     </div>
                                 </div>
                             @endif

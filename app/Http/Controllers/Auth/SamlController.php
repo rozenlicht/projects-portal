@@ -37,22 +37,40 @@ class SamlController extends Controller
         // Load certificates from files if paths are provided
         if (empty($config['sp']['x509cert']) && !empty(config('saml.sp.public_cert_path'))) {
             $certPath = config('saml.sp.public_cert_path');
+            // Handle both absolute and relative paths
+            if (!file_exists($certPath) && !str_starts_with($certPath, '/')) {
+                $certPath = base_path($certPath);
+            }
             if (file_exists($certPath)) {
                 $config['sp']['x509cert'] = file_get_contents($certPath);
+            } else {
+                Log::warning("SAML SP public certificate not found at: {$certPath}");
             }
         }
 
         if (empty($config['sp']['privateKey']) && !empty(config('saml.sp.private_key_path'))) {
             $keyPath = config('saml.sp.private_key_path');
+            // Handle both absolute and relative paths
+            if (!file_exists($keyPath) && !str_starts_with($keyPath, '/')) {
+                $keyPath = base_path($keyPath);
+            }
             if (file_exists($keyPath)) {
                 $config['sp']['privateKey'] = file_get_contents($keyPath);
+            } else {
+                Log::warning("SAML SP private key not found at: {$keyPath}");
             }
         }
 
         if (empty($config['idp']['x509cert']) && !empty(config('saml.surf.public_cert_path'))) {
             $certPath = config('saml.surf.public_cert_path');
+            // Handle both absolute and relative paths
+            if (!file_exists($certPath) && !str_starts_with($certPath, '/')) {
+                $certPath = base_path($certPath);
+            }
             if (file_exists($certPath)) {
                 $config['idp']['x509cert'] = file_get_contents($certPath);
+            } else {
+                Log::warning("SAML SURF public certificate not found at: {$certPath}");
             }
         }
 
@@ -270,13 +288,26 @@ class SamlController extends Controller
         $this->ensureSamlEnabled();
         
         try {
-            $settings = new Settings($this->getSamlSettings(), true);
+            $samlSettings = $this->getSamlSettings();
+            
+            // Validate required settings
+            if (empty($samlSettings['sp']['entityId'])) {
+                Log::error('SAML metadata: SP entityId is missing');
+                return response('SP Entity ID is not configured', 500);
+            }
+            
+            if (empty($samlSettings['sp']['x509cert']) && empty($samlSettings['sp']['privateKey'])) {
+                Log::error('SAML metadata: SP certificates are missing');
+                return response('SP certificates are not configured. Run: php artisan saml:install', 500);
+            }
+            
+            $settings = new Settings($samlSettings, true);
             $metadata = $settings->getSPMetadata();
             $errors = $settings->validateMetadata($metadata);
 
             if (!empty($errors)) {
-                Log::error('SAML metadata errors: ' . implode(', ', $errors));
-                return response('Metadata validation failed', 500);
+                Log::error('SAML metadata validation errors: ' . implode(', ', $errors));
+                return response('Metadata validation failed: ' . implode(', ', $errors), 500);
             }
 
             return response($metadata, 200, [
@@ -284,7 +315,8 @@ class SamlController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('SAML metadata error: ' . $e->getMessage());
-            return response('Metadata generation failed', 500);
+            Log::error('SAML metadata stack trace: ' . $e->getTraceAsString());
+            return response('Metadata generation failed: ' . $e->getMessage(), 500);
         }
     }
 

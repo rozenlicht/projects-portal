@@ -31,6 +31,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
         'slug',
         'email',
         'password',
+        'surf_id',
         'group_id',
         'avatar_url',
         'invitation_token',
@@ -100,5 +101,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
     public function getFilamentAvatarUrl(): ?string
     {
         return $this->avatar_url ? \Illuminate\Support\Facades\Storage::url($this->avatar_url) : null;
+    }
+
+    /**
+     * Find user by email for SAML authentication
+     */
+    public static function findByEmailForSaml(string $email): ?self
+    {
+        return static::where('email', $email)->first();
     }
 }

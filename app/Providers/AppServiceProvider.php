@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Auth\Guards\StudentsGuard;
+use App\Auth\Providers\StudentsProvider;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 use Opcodes\LogViewer\Facades\LogViewer;
@@ -21,6 +24,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Register custom students guard
+        Auth::extend('students', function (Application $app, string $name, array $config) {
+            $provider = new StudentsProvider($app['session']);
+            return new StudentsGuard($provider, $app['session']);
+        });
+
+        // Register custom students provider
+        Auth::provider('students', function (Application $app, array $config) {
+            return new StudentsProvider($app['session']);
+        });
+
         LogViewer::auth(function ($request) {
             return Auth::check() && Auth::user()->hasRole('Administrator');
         });

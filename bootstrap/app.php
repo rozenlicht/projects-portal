@@ -12,7 +12,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->validateCsrfTokens(except: [
+            'saml/acs',
+            'saml/sls',
+        ]);
+        
+        // Redirect unauthenticated students to SAML login only if SAML is enabled
+        if (\App\Helpers\SamlHelper::isEnabled()) {
+            $middleware->redirectGuestsTo(fn () => route('saml.login', ['guard' => 'students']));
+        }
     })
     ->withSchedule(function (Schedule $schedule): void {
         $schedule->command('avatars:resize')->dailyAt('01:00');

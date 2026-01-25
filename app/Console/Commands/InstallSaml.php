@@ -172,12 +172,24 @@ class InstallSaml extends Command
 
         $this->newLine();
         $this->comment('Add these to your .env file:');
+        $this->newLine();
+        $this->line('# SURF Conext Configuration (required for SAML to be enabled)');
+        $this->line("SURF_ENTITY_ID=https://engine.surfconext.nl/authentication/idp/metadata");
+        $this->line("SURF_SSO_URL=https://engine.surfconext.nl/authentication/idp/single-sign-on");
+        $this->line("SURF_SLO_URL=https://engine.surfconext.nl/authentication/idp/single-logout");
+        $this->line("SURF_METADATA_URL=https://engine.surfconext.nl/authentication/idp/metadata");
+        $this->line("SURF_PUBLIC_CERT_PATH=storage/app/saml/surf_public.crt");
+        $this->newLine();
+        $this->line('# Service Provider (SP) Configuration');
         $this->line("SAML_SP_ENTITY_ID={$spEntityId}");
         $this->line("SAML_SP_ACS_URL={$acsUrl}");
         $this->line("SAML_SP_SLS_URL={$slsUrl}");
         $this->line("SAML_SP_METADATA_URL={$appUrl}/saml/metadata");
         $this->line("SAML_SP_PRIVATE_KEY_PATH=storage/app/saml/sp_private.key");
         $this->line("SAML_SP_PUBLIC_CERT_PATH=storage/app/saml/sp_public.crt");
-        $this->line("SURF_PUBLIC_CERT_PATH=storage/app/saml/surf_public.crt");
+        $this->newLine();
+        $this->line('# Optional SAML Settings');
+        $this->line("SAML_STRICT=true");
+        $this->line("SAML_DEBUG=false");
     }
 }

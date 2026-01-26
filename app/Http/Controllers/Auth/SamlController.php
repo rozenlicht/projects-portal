@@ -238,9 +238,60 @@ class SamlController extends Controller
                     Log::error('SAML ACS error exception trace: ' . $errorException->getTraceAsString());
                 }
                 
-                // Log SAML response for debugging if enabled
+                // Always log detailed certificate comparison for signature errors
+                $lastResponseXML = $samlAuth->getLastResponseXML();
+                if ($lastResponseXML) {
+                    try {
+                        $responseDoc = new \DOMDocument();
+                        $responseDoc->loadXML($lastResponseXML);
+                        $xpath = new \DOMXPath($responseDoc);
+                        $xpath->registerNamespace('ds', 'http://www.w3.org/2000/09/xmldsig#');
+                        $xpath->registerNamespace('saml', 'urn:oasis:names:tc:SAML:2.0:assertion');
+                        
+                        // Find certificates in the response
+                        $certNodes = $xpath->query('//ds:X509Certificate');
+                        Log::error('SAML ACS: Found ' . $certNodes->length . ' certificate(s) in response');
+                        
+                        if ($certNodes->length > 0) {
+                            for ($i = 0; $i < $certNodes->length; $i++) {
+                                $responseCert = $certNodes->item($i)->nodeValue;
+                                $responseCertClean = preg_replace('/\s+/', '', $responseCert);
+                                Log::error("SAML ACS: Response cert #{$i} (first 100 chars): " . substr($responseCertClean, 0, 100));
+                            }
+                            
+                            // Compare with our certificate
+                            $idpData = $samlAuth->getSettings()->getIdPData();
+                            $ourCert = $idpData['x509cert'] ?? '';
+                            if ($ourCert) {
+                                $ourCertClean = preg_replace('/\s+/', '', $ourCert);
+                                Log::error('SAML ACS: Our configured cert (first 100 chars): ' . substr($ourCertClean, 0, 100));
+                                
+                                $foundMatch = false;
+                                for ($i = 0; $i < $certNodes->length; $i++) {
+                                    $responseCertClean = preg_replace('/\s+/', '', $certNodes->item($i)->nodeValue);
+                                    if ($ourCertClean === $responseCertClean) {
+                                        Log::error("SAML ACS: Certificate #{$i} MATCHES our configured certificate!");
+                                        $foundMatch = true;
+                                        break;
+                                    }
+                                }
+                                
+                                if (!$foundMatch) {
+                                    Log::error('SAML ACS: NONE of the response certificates match our configured certificate!');
+                                    Log::error('SAML ACS: This suggests the wrong certificate was extracted from SURF metadata.');
+                                    Log::error('SAML ACS: Please re-extract the certificate from SURF metadata or check if multiple certificates are needed.');
+                                }
+                            }
+                        } else {
+                            Log::error('SAML ACS: No X509Certificate found in response - response may not be signed');
+                        }
+                    } catch (\Exception $e) {
+                        Log::error('SAML ACS: Could not extract certificate from response: ' . $e->getMessage());
+                    }
+                }
+                
+                // Log full response XML if debug is enabled
                 if (config('saml.settings.strict', false) || env('SAML_DEBUG', false)) {
-                    $lastResponseXML = $samlAuth->getLastResponseXML();
                     if ($lastResponseXML) {
                         Log::debug('SAML ACS Last Response XML: ' . $lastResponseXML);
                     }

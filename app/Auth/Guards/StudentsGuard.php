@@ -68,6 +68,14 @@ class StudentsGuard implements Guard
     }
 
     /**
+     * Determine if a user has been set.
+     */
+    public function hasUser(): bool
+    {
+        return !is_null($this->user);
+    }
+
+    /**
      * Validate a user's credentials.
      */
     public function validate(array $credentials = []): bool

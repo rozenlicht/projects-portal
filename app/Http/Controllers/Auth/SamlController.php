@@ -27,7 +27,33 @@ class SamlController extends Controller
     protected function getSamlAuth(?string $guard = null): SamlAuth
     {
         $settings = $this->getSamlSettings();
-        return new SamlAuth($settings);
+        
+        // Validate that required certificates are present
+        if (empty($settings['idp']['x509cert'])) {
+            $certPath = config('saml.surf.public_cert_path');
+            throw new \RuntimeException(
+                'SURF Conext certificate is required but not found. ' .
+                'Certificate path: ' . $certPath . '. ' .
+                'Please download it using: php artisan saml:install ' .
+                'or set SURF_PUBLIC_CERT environment variable.'
+            );
+        }
+        
+        try {
+            return new SamlAuth($settings);
+        } catch (\Exception $e) {
+            // If it's a certificate error, provide more helpful message
+            if (str_contains($e->getMessage(), 'cert') || str_contains($e->getMessage(), 'fingerprint')) {
+                Log::error('SAML configuration error: ' . $e->getMessage());
+                Log::error('IDP certificate status: ' . (empty($settings['idp']['x509cert']) ? 'MISSING' : 'PRESENT (' . strlen($settings['idp']['x509cert']) . ' chars)'));
+                throw new \RuntimeException(
+                    'SAML configuration error: IDP certificate issue. ' .
+                    'Please ensure the SURF Conext certificate is properly downloaded and configured. ' .
+                    'Run: php artisan saml:install'
+                );
+            }
+            throw $e;
+        }
     }
 
     protected function getSamlSettings(): array
@@ -61,19 +87,30 @@ class SamlController extends Controller
             }
         }
 
-        if (empty($config['idp']['x509cert']) && !empty(config('saml.surf.public_cert_path'))) {
-            $certPath = config('saml.surf.public_cert_path');
-            // Handle both absolute and relative paths
-            if (!file_exists($certPath) && !str_starts_with($certPath, '/')) {
-                $certPath = base_path($certPath);
+        // Load IDP certificate - required for SAML authentication when wantAssertionsSigned is true
+        if (empty($config['idp']['x509cert'])) {
+            // First try environment variable (can be PEM or base64)
+            $certContent = env('SURF_PUBLIC_CERT');
+            if (!empty($certContent)) {
+                $config['idp']['x509cert'] = $this->normalizeCertificate($certContent);
+            } elseif (!empty(config('saml.surf.public_cert_path'))) {
+                // Then try file path
+                $certPath = config('saml.surf.public_cert_path');
+                // Handle both absolute and relative paths
+                if (!file_exists($certPath) && !str_starts_with($certPath, '/')) {
+                    $certPath = base_path($certPath);
+                }
+                if (file_exists($certPath)) {
+                    $fileContent = file_get_contents($certPath);
+                    $config['idp']['x509cert'] = $this->normalizeCertificate($fileContent);
+                } else {
+                    Log::warning("SAML SURF public certificate not found at: {$certPath}");
+                    Log::warning("SAML authentication will fail without the IDP certificate. Run: php artisan saml:install");
+                }
             }
-            if (file_exists($certPath)) {
-                $config['idp']['x509cert'] = file_get_contents($certPath);
-            } else {
-                // This is expected if the certificate hasn't been downloaded yet
-                // The certificate can be downloaded from SURF Conext metadata or provided via env
-                Log::debug("SAML SURF public certificate not found at: {$certPath}. This is normal if you haven't downloaded it yet.");
-            }
+        } else {
+            // Normalize existing certificate content
+            $config['idp']['x509cert'] = $this->normalizeCertificate($config['idp']['x509cert']);
         }
 
         return $config;
@@ -320,6 +357,24 @@ class SamlController extends Controller
             Log::error('SAML metadata stack trace: ' . $e->getTraceAsString());
             return response('Metadata generation failed: ' . $e->getMessage(), 500);
         }
+    }
+
+    /**
+     * Normalize certificate content for OneLogin library
+     * The library expects base64-encoded content without PEM headers
+     */
+    protected function normalizeCertificate(string $cert): string
+    {
+        $cert = trim($cert);
+        
+        // Remove PEM headers/footers if present
+        $cert = preg_replace('/-----BEGIN CERTIFICATE-----/i', '', $cert);
+        $cert = preg_replace('/-----END CERTIFICATE-----/i', '', $cert);
+        
+        // Remove all whitespace (spaces, newlines, tabs, carriage returns)
+        $cert = preg_replace('/\s+/', '', $cert);
+        
+        return $cert;
     }
 
     /**

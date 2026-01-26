@@ -215,6 +215,9 @@ class SamlController extends Controller
                 Log::debug('SAML ACS: Request ID from session: ' . ($requestId ?? 'none'));
                 if ($request->has('SAMLResponse')) {
                     Log::debug('SAML ACS: SAMLResponse POST parameter present');
+                    // Log a preview of the response (first 500 chars) for debugging
+                    $responsePreview = substr($request->input('SAMLResponse'), 0, 500);
+                    Log::debug('SAML ACS: Response preview: ' . $responsePreview . '...');
                 }
             }
             
@@ -448,19 +451,16 @@ class SamlController extends Controller
 
     /**
      * Normalize certificate content for OneLogin library
-     * The library expects base64-encoded content without PEM headers
+     * The library's Utils::formatCert() handles formatting, so we just clean it up
+     * but keep PEM headers if present - the library will reformat as needed
      */
     protected function normalizeCertificate(string $cert): string
     {
         $cert = trim($cert);
         
-        // Remove PEM headers/footers if present
-        $cert = preg_replace('/-----BEGIN CERTIFICATE-----/i', '', $cert);
-        $cert = preg_replace('/-----END CERTIFICATE-----/i', '', $cert);
-        
-        // Remove all whitespace (spaces, newlines, tabs, carriage returns)
-        $cert = preg_replace('/\s+/', '', $cert);
-        
+        // If it's already in PEM format, keep it as-is (library will handle it)
+        // If it's base64 without headers, that's also fine
+        // Just ensure it's clean
         return $cert;
     }
 

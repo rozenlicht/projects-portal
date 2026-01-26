@@ -20,22 +20,38 @@ class RedirectToSamlLogin
             return $next($request);
         }
 
+        // Get the current path and URI
+        $path = $request->path();
+        $uri = $request->getRequestUri();
+        $routeName = $request->route()?->getName();
+        
         // Don't redirect SAML routes themselves or onboarding routes
-        if ($request->is('saml/*') || $request->is('onboarding/*')) {
+        // Check multiple ways to be absolutely sure
+        if (
+            $path === 'saml/login' ||
+            $path === 'saml/acs' ||
+            $path === 'saml/logout' ||
+            $path === 'saml/sls' ||
+            $path === 'saml/metadata' ||
+            str_starts_with($path, 'saml/') ||
+            str_starts_with($path, 'onboarding/') ||
+            str_starts_with($uri, '/saml/') ||
+            str_starts_with($uri, '/onboarding/') ||
+            ($routeName && (str_starts_with($routeName, 'saml.') || str_starts_with($routeName, 'onboarding.')))
+        ) {
             return $next($request);
         }
 
-        // Don't redirect if already on the login page (prevent loops)
-        if ($request->is('saml/login')) {
-            return $next($request);
-        }
-
+        // Check if user is authenticated with students guard
         if (!auth('students')->check()) {
-            $returnUrl = $request->fullUrl();
-            // Don't redirect to login if we're already being redirected from login
-            if (str_contains($returnUrl, 'saml/login')) {
-                $returnUrl = '/';
+            // Use the current URL as return, but avoid loops
+            $returnUrl = $request->url();
+            
+            // Prevent redirect loops - if return URL contains saml/login, use home
+            if (str_contains($returnUrl, 'saml/login') || str_contains($returnUrl, '/saml/')) {
+                $returnUrl = url('/');
             }
+            
             return redirect('/saml/login?guard=students&return=' . urlencode($returnUrl));
         }
 

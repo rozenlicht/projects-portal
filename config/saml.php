@@ -14,7 +14,7 @@ return [
         'entity_id' => env('SURF_ENTITY_ID', 'https://engine.surfconext.nl/authentication/idp/metadata'),
         'sso_url' => env('SURF_SSO_URL', 'https://engine.surfconext.nl/authentication/idp/single-sign-on'),
         'slo_url' => env('SURF_SLO_URL', 'https://engine.surfconext.nl/authentication/idp/single-logout'),
-        'metadata_url' => env('SURF_METADATA_URL', 'https://engine.surfconext.nl/authentication/idp/metadata'),
+        'metadata_url' => env('SURF_METADATA_URL', 'https://metadata.surfconext.nl/idp-metadata.xml'),
         'public_cert_path' => env('SURF_PUBLIC_CERT_PATH', storage_path('app/saml/surf_public.crt')),
     ],
 

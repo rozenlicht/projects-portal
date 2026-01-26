@@ -70,7 +70,9 @@ class SamlController extends Controller
             if (file_exists($certPath)) {
                 $config['idp']['x509cert'] = file_get_contents($certPath);
             } else {
-                Log::warning("SAML SURF public certificate not found at: {$certPath}");
+                // This is expected if the certificate hasn't been downloaded yet
+                // The certificate can be downloaded from SURF Conext metadata or provided via env
+                Log::debug("SAML SURF public certificate not found at: {$certPath}. This is normal if you haven't downloaded it yet.");
             }
         }
 

@@ -55,9 +55,9 @@ class InstallSaml extends Command
         $this->newLine();
         $this->comment('Next steps:');
         $this->line('1. Configure your .env file with SURF Conext settings');
-        $this->line('2. Register your application in SURF Conext');
-        $this->line('3. Provide your SP metadata URL: ' . config('app.url') . '/saml/metadata');
-        $this->line('4. Download SURF Conext certificate and save it to: ' . storage_path('app/saml/surf_public.crt'));
+        $this->line('2. Download SURF Conext certificate (see instructions above)');
+        $this->line('3. Register your application in SURF Conext');
+        $this->line('4. Provide your SP metadata URL: ' . config('app.url') . '/saml/metadata');
 
         return Command::SUCCESS;
     }
@@ -141,8 +141,31 @@ class InstallSaml extends Command
             $this->line("✓ SURF Conext certificate found: {$surfCertPath}");
         } else {
             $this->warn("⚠ SURF Conext certificate not found: {$surfCertPath}");
-            $this->line('  You need to download the SURF Conext certificate and save it to this location.');
-            $this->line('  Certificate URL: https://engine.surfconext.nl/authentication/idp/metadata');
+            $this->newLine();
+            $this->line('  To download the SURF Conext certificate, use one of these methods:');
+            $this->newLine();
+            $this->line('  Method 1: Extract using xmllint (recommended, works on Linux and macOS)');
+            $this->line('  curl -s https://metadata.surfconext.nl/idp-metadata.xml | \\');
+            $this->line('    xmllint --xpath \'//*[local-name()="KeyDescriptor" and @use="signing"]//*[local-name()="X509Certificate"]/text()\' - 2>/dev/null | \\');
+            $this->line('    tr -d \' \\n\\r\' | \\');
+            $this->line('    base64 -d 2>/dev/null | openssl x509 -inform DER -outform PEM > ' . $surfCertPath);
+            $this->newLine();
+            $this->line('  Method 1b: Alternative using sed/grep (Linux only, requires grep with -P support)');
+            $this->line('  curl -s https://metadata.surfconext.nl/idp-metadata.xml | \\');
+            $this->line('    sed -n \'/<md:KeyDescriptor[^>]*use="signing"/,/<\\/md:KeyDescriptor>/p\' | \\');
+            $this->line('    grep -oP \'<ds:X509Certificate>(.*?)</ds:X509Certificate>\' | \\');
+            $this->line('    sed \'s/<ds:X509Certificate>//;s/<\/ds:X509Certificate>//\' | \\');
+            $this->line('    tr -d \' \\n\\r\' | \\');
+            $this->line('    base64 -d 2>/dev/null | openssl x509 -inform DER -outform PEM > ' . $surfCertPath);
+            $this->newLine();
+            $this->line('  Method 2: Manual extraction');
+            $this->line('  1. Visit: https://metadata.surfconext.nl/idp-metadata.xml');
+            $this->line('  2. Find the <md:KeyDescriptor use="signing"> section');
+            $this->line('  3. Copy the <ds:X509Certificate> content (base64, no line breaks)');
+            $this->line('  4. Decode and convert: echo "CERT_CONTENT" | base64 -d | openssl x509 -inform DER -outform PEM > ' . $surfCertPath);
+            $this->newLine();
+            $this->line('  Method 3: Provide via environment variable');
+            $this->line('  Set SURF_PUBLIC_CERT in your .env file with the PEM certificate content.');
         }
     }
 
@@ -177,7 +200,7 @@ class InstallSaml extends Command
         $this->line("SURF_ENTITY_ID=https://engine.surfconext.nl/authentication/idp/metadata");
         $this->line("SURF_SSO_URL=https://engine.surfconext.nl/authentication/idp/single-sign-on");
         $this->line("SURF_SLO_URL=https://engine.surfconext.nl/authentication/idp/single-logout");
-        $this->line("SURF_METADATA_URL=https://engine.surfconext.nl/authentication/idp/metadata");
+        $this->line("SURF_METADATA_URL=https://metadata.surfconext.nl/idp-metadata.xml");
         $this->line("SURF_PUBLIC_CERT_PATH=storage/app/saml/surf_public.crt");
         $this->newLine();
         $this->line('# Service Provider (SP) Configuration');

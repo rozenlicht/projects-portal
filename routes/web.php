@@ -16,7 +16,7 @@ Route::get('/saml/sls', [SamlController::class, 'sls'])->name('saml.sls');
 Route::get('/saml/metadata', [SamlController::class, 'metadata'])->name('saml.metadata');
 
 // Public routes - require SAML auth only if SAML is enabled
-$middleware = SamlHelper::isEnabled() ? ['auth:students'] : [];
+$middleware = SamlHelper::isEnabled() ? [\App\Http\Middleware\RedirectToSamlLogin::class] : [];
 Route::middleware($middleware)->group(function () {
     Route::get('/', function () {
         return view('welcome');

@@ -28,10 +28,10 @@ return [
     */
 
     'sp' => [
-        'entity_id' => env('SAML_SP_ENTITY_ID', env('APP_URL') . '/saml/metadata'),
-        'acs_url' => env('SAML_SP_ACS_URL', env('APP_URL') . '/saml/acs'),
-        'sls_url' => env('SAML_SP_SLS_URL', env('APP_URL') . '/saml/sls'),
-        'metadata_url' => env('SAML_SP_METADATA_URL', env('APP_URL') . '/saml/metadata'),
+        'entity_id' => env('SAML_SP_ENTITY_ID', rtrim(env('APP_URL', 'http://localhost'), '/') . '/saml/metadata'),
+        'acs_url' => env('SAML_SP_ACS_URL', rtrim(env('APP_URL', 'http://localhost'), '/') . '/saml/acs'),
+        'sls_url' => env('SAML_SP_SLS_URL', rtrim(env('APP_URL', 'http://localhost'), '/') . '/saml/sls'),
+        'metadata_url' => env('SAML_SP_METADATA_URL', rtrim(env('APP_URL', 'http://localhost'), '/') . '/saml/metadata'),
         'private_key_path' => env('SAML_SP_PRIVATE_KEY_PATH', storage_path('app/saml/sp_private.key')),
         'public_cert_path' => env('SAML_SP_PUBLIC_CERT_PATH', storage_path('app/saml/sp_public.crt')),
     ],
@@ -49,13 +49,13 @@ return [
         'strict' => env('SAML_STRICT', true),
         'debug' => env('SAML_DEBUG', false),
         'sp' => [
-            'entityId' => env('SAML_SP_ENTITY_ID', env('APP_URL') . '/saml/metadata'),
+            'entityId' => env('SAML_SP_ENTITY_ID', rtrim(env('APP_URL', 'http://localhost'), '/') . '/saml/metadata'),
             'assertionConsumerService' => [
-                'url' => env('SAML_SP_ACS_URL', env('APP_URL') . '/saml/acs'),
+                'url' => env('SAML_SP_ACS_URL', rtrim(env('APP_URL', 'http://localhost'), '/') . '/saml/acs'),
                 'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
             ],
             'singleLogoutService' => [
-                'url' => env('SAML_SP_SLS_URL', env('APP_URL') . '/saml/sls'),
+                'url' => env('SAML_SP_SLS_URL', rtrim(env('APP_URL', 'http://localhost'), '/') . '/saml/sls'),
                 'binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
             ],
             'NameIDFormat' => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',

@@ -31,6 +31,13 @@ class SamlController extends Controller
         // Validate that required certificates are present
         if (empty($settings['idp']['x509cert'])) {
             $certPath = config('saml.surf.public_cert_path');
+            $triedPaths = [
+                $certPath,
+                base_path($certPath),
+                storage_path('app/saml/surf_public.crt'),
+            ];
+            
+            Log::error('SAML IDP certificate not found. Tried paths: ' . implode(', ', $triedPaths));
             throw new \RuntimeException(
                 'SURF Conext certificate is required but not found. ' .
                 'Certificate path: ' . $certPath . '. ' .
@@ -39,6 +46,10 @@ class SamlController extends Controller
             );
         }
         
+        // Log certificate info for debugging (first 50 chars only)
+        $certPreview = substr($settings['idp']['x509cert'], 0, 50);
+        Log::debug("SAML IDP certificate loaded: {$certPreview}... (total: " . strlen($settings['idp']['x509cert']) . " chars)");
+        
         try {
             return new SamlAuth($settings);
         } catch (\Exception $e) {
@@ -46,10 +57,11 @@ class SamlController extends Controller
             if (str_contains($e->getMessage(), 'cert') || str_contains($e->getMessage(), 'fingerprint')) {
                 Log::error('SAML configuration error: ' . $e->getMessage());
                 Log::error('IDP certificate status: ' . (empty($settings['idp']['x509cert']) ? 'MISSING' : 'PRESENT (' . strlen($settings['idp']['x509cert']) . ' chars)'));
+                Log::error('IDP certificate preview: ' . substr($settings['idp']['x509cert'] ?? '', 0, 100));
                 throw new \RuntimeException(
                     'SAML configuration error: IDP certificate issue. ' .
                     'Please ensure the SURF Conext certificate is properly downloaded and configured. ' .
-                    'Run: php artisan saml:install'
+                    'Run: php artisan saml:install. Error: ' . $e->getMessage()
                 );
             }
             throw $e;
@@ -93,19 +105,56 @@ class SamlController extends Controller
             $certContent = env('SURF_PUBLIC_CERT');
             if (!empty($certContent)) {
                 $config['idp']['x509cert'] = $this->normalizeCertificate($certContent);
+                Log::debug('SAML: Loaded IDP certificate from SURF_PUBLIC_CERT environment variable');
             } elseif (!empty(config('saml.surf.public_cert_path'))) {
                 // Then try file path
-                $certPath = config('saml.surf.public_cert_path');
-                // Handle both absolute and relative paths
-                if (!file_exists($certPath) && !str_starts_with($certPath, '/')) {
-                    $certPath = base_path($certPath);
+                $originalPath = config('saml.surf.public_cert_path');
+                $certPath = $originalPath;
+                
+                // storage_path() returns absolute path, so if it's already that, use it
+                // Otherwise try different path resolutions
+                $pathsToTry = [
+                    $originalPath, // Try as-is first
+                ];
+                
+                // If it's not absolute, try relative to base_path
+                if (!str_starts_with($originalPath, '/')) {
+                    $pathsToTry[] = base_path($originalPath);
                 }
-                if (file_exists($certPath)) {
+                
+                // Also try direct storage_path
+                if (str_contains($originalPath, 'storage/')) {
+                    $pathsToTry[] = storage_path(str_replace('storage/', '', $originalPath));
+                }
+                
+                // Try storage_path('app/saml/surf_public.crt') directly
+                $pathsToTry[] = storage_path('app/saml/surf_public.crt');
+                
+                $found = false;
+                foreach ($pathsToTry as $tryPath) {
+                    if (file_exists($tryPath) && is_readable($tryPath)) {
+                        $certPath = $tryPath;
+                        $found = true;
+                        break;
+                    }
+                }
+                
+                if ($found) {
                     $fileContent = file_get_contents($certPath);
-                    $config['idp']['x509cert'] = $this->normalizeCertificate($fileContent);
+                    if (!empty($fileContent)) {
+                        $normalized = $this->normalizeCertificate($fileContent);
+                        if (!empty($normalized)) {
+                            $config['idp']['x509cert'] = $normalized;
+                            Log::debug("SAML: Loaded IDP certificate from file: {$certPath} (" . strlen($config['idp']['x509cert']) . " chars)");
+                        } else {
+                            Log::error("SAML SURF public certificate file content is invalid after normalization: {$certPath}");
+                        }
+                    } else {
+                        Log::error("SAML SURF public certificate file is empty: {$certPath}");
+                    }
                 } else {
-                    Log::warning("SAML SURF public certificate not found at: {$certPath}");
-                    Log::warning("SAML authentication will fail without the IDP certificate. Run: php artisan saml:install");
+                    Log::error("SAML SURF public certificate not found. Tried paths: " . implode(', ', $pathsToTry));
+                    Log::error("SAML authentication will fail without the IDP certificate. Run: php artisan saml:install");
                 }
             }
         } else {

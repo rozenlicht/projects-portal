@@ -175,7 +175,16 @@ class InstallSaml extends Command
         $this->info('SAML Configuration Information:');
         $this->newLine();
 
-        $appUrl = config('app.url');
+        $appUrl = rtrim(config('app.url'), '/');
+        
+        // Warn if using HTTP instead of HTTPS
+        if (str_starts_with($appUrl, 'http://') && !str_contains($appUrl, 'localhost')) {
+            $this->warn('⚠ Warning: APP_URL is set to HTTP instead of HTTPS!');
+            $this->line('  For production, you should use HTTPS. Update your .env file:');
+            $this->line('  APP_URL=https://your-domain.com');
+            $this->newLine();
+        }
+        
         $spEntityId = $appUrl . '/saml/metadata';
         $acsUrl = $appUrl . '/saml/acs';
         $slsUrl = $appUrl . '/saml/sls';
@@ -196,6 +205,14 @@ class InstallSaml extends Command
         $this->newLine();
         $this->comment('Add these to your .env file:');
         $this->newLine();
+        
+        // Check if APP_URL is HTTP and warn
+        if (str_starts_with($appUrl, 'http://') && !str_contains($appUrl, 'localhost')) {
+            $this->warn('⚠ IMPORTANT: Your APP_URL is set to HTTP. For production with SURF Conext, you MUST use HTTPS!');
+            $this->line('  Update your .env file: APP_URL=https://your-domain.com');
+            $this->newLine();
+        }
+        
         $this->line('# SURF Conext Configuration (required for SAML to be enabled)');
         $this->line("SURF_ENTITY_ID=https://engine.surfconext.nl/authentication/idp/metadata");
         $this->line("SURF_SSO_URL=https://engine.surfconext.nl/authentication/idp/single-sign-on");
@@ -204,6 +221,7 @@ class InstallSaml extends Command
         $this->line("SURF_PUBLIC_CERT_PATH=storage/app/saml/surf_public.crt");
         $this->newLine();
         $this->line('# Service Provider (SP) Configuration');
+        $this->line('# Note: These will use APP_URL. Make sure APP_URL is set to HTTPS for production!');
         $this->line("SAML_SP_ENTITY_ID={$spEntityId}");
         $this->line("SAML_SP_ACS_URL={$acsUrl}");
         $this->line("SAML_SP_SLS_URL={$slsUrl}");
@@ -214,5 +232,8 @@ class InstallSaml extends Command
         $this->line('# Optional SAML Settings');
         $this->line("SAML_STRICT=true");
         $this->line("SAML_DEBUG=false");
+        $this->newLine();
+        $this->line('# IMPORTANT: Make sure APP_URL is set to HTTPS for production!');
+        $this->line("APP_URL={$appUrl}");
     }
 }

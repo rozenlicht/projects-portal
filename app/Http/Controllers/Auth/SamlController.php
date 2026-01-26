@@ -181,8 +181,16 @@ class SamlController extends Controller
         try {
             $samlAuth = $this->getSamlAuth($guard);
             $samlAuth->login($returnUrl);
+            
+            // Store the request ID for validation in ACS
+            $requestId = $samlAuth->getLastRequestID();
+            if ($requestId) {
+                session(['saml_request_id' => $requestId]);
+                Log::debug('SAML login initiated with request ID: ' . $requestId);
+            }
         } catch (\Exception $e) {
             Log::error('SAML login error: ' . $e->getMessage());
+            Log::error('SAML login error trace: ' . $e->getTraceAsString());
             return redirect('/')->with('error', 'Authentication failed. Please try again.');
         }
     }
@@ -196,15 +204,45 @@ class SamlController extends Controller
         
         $guard = session('saml_guard', 'students');
         $returnUrl = session('saml_return_url', '/');
+        $requestId = session('saml_request_id');
 
         try {
             $samlAuth = $this->getSamlAuth($guard);
-            $samlAuth->processResponse();
+            
+            // Log incoming SAML response for debugging
+            if (config('saml.settings.strict', false) || env('SAML_DEBUG', false)) {
+                Log::debug('SAML ACS: Processing response for guard: ' . $guard);
+                Log::debug('SAML ACS: Request ID from session: ' . ($requestId ?? 'none'));
+                if ($request->has('SAMLResponse')) {
+                    Log::debug('SAML ACS: SAMLResponse POST parameter present');
+                }
+            }
+            
+            $samlAuth->processResponse($requestId);
 
             $errors = $samlAuth->getErrors();
 
             if (!empty($errors)) {
+                $errorReason = $samlAuth->getLastErrorReason();
+                $errorException = $samlAuth->getLastErrorException();
+                
                 Log::error('SAML ACS errors: ' . implode(', ', $errors));
+                if ($errorReason) {
+                    Log::error('SAML ACS error reason: ' . $errorReason);
+                }
+                if ($errorException) {
+                    Log::error('SAML ACS error exception: ' . $errorException->getMessage());
+                    Log::error('SAML ACS error exception trace: ' . $errorException->getTraceAsString());
+                }
+                
+                // Log SAML response for debugging if enabled
+                if (config('saml.settings.strict', false) || env('SAML_DEBUG', false)) {
+                    $lastResponseXML = $samlAuth->getLastResponseXML();
+                    if ($lastResponseXML) {
+                        Log::debug('SAML ACS Last Response XML: ' . $lastResponseXML);
+                    }
+                }
+                
                 return redirect('/')->with('error', 'Authentication failed. Please try again.');
             }
 
@@ -247,7 +285,7 @@ class SamlController extends Controller
         Auth::guard('students')->setUser($user);
 
         // Clear SAML session data
-        session()->forget(['saml_return_url', 'saml_guard']);
+        session()->forget(['saml_return_url', 'saml_guard', 'saml_request_id']);
 
         return redirect($returnUrl);
     }
@@ -286,7 +324,7 @@ class SamlController extends Controller
         Auth::guard('web')->login($user);
 
         // Clear SAML session data
-        session()->forget(['saml_return_url', 'saml_guard']);
+        session()->forget(['saml_return_url', 'saml_guard', 'saml_request_id']);
 
         return redirect($returnUrl ?: '/admin');
     }

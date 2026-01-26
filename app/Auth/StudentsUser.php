@@ -46,6 +46,15 @@ class StudentsUser implements Authenticatable, Arrayable
     }
 
     /**
+     * Get the name of the password attribute for the user.
+     */
+    public function getAuthPasswordName(): string
+    {
+        // Not used for SAML authentication
+        return '';
+    }
+
+    /**
      * Get the token value for the "remember me" session.
      */
     public function getRememberToken(): string
